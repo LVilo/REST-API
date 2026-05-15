@@ -9,9 +9,8 @@ namespace MongoAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Добавляем MongoDeviceService как singleton
-            builder.Services.AddSingleton(new MongoDeviceService("mongodb://localhost:27017"));
-            //builder.Services.AddSingleton(new MongoDeviceService("mongodb://localhost:27017"));
+            Database database = new Mongo("mongodb://localhost:27017");
+            builder.Services.AddSingleton(database);
 
             // Добавляем контроллеры
             builder.Services.AddControllers();
@@ -28,6 +27,7 @@ namespace MongoAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
             app.MapControllers();

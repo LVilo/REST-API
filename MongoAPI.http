@@ -1,6 +1,6 @@
-@MongoAPI_HostAddress = http://localhost:5186
+﻿@MongoAPI_HostAddress = http://localhost:5186
 
-GET {{MongoAPI_HostAddress}}/weatherforecast/
+GET {{MongoAPI_HostAddress}}/Configurations/
 Accept: application/json
 
 ###
