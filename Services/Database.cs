@@ -4,6 +4,9 @@ namespace MongoAPI.Services
 {
     public interface Database
     {
+        public string ConnectionString { get; set; }
+        public string DatabaseName { get; set; }
+
         public Task AddDeviceConfigAsync(Config config);
 
         //public Task<Config> GetBySerialNumberAsync(ulong serialNumber);
