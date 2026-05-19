@@ -3,6 +3,7 @@
     build: .
     ports:
       - "8080:8080"
+      - "8081:8081"
     environment:
       MongoDbSettings__ConnectionString: mongodb://mongo:27017
       MongoDbSettings__DatabaseName: mydb
