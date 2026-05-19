@@ -105,7 +105,7 @@ namespace MongoAPI.Controllers
         [HttpGet("Configurations/Status")]
         public async Task<IActionResult> Status()
         {
-            return Ok();
+            return Ok("OK");
         }
     }
 }
