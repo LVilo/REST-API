@@ -102,6 +102,10 @@ namespace MongoAPI.Controllers
             await _service.DeleteAsync(ID);
             return Ok();
         }
-        
+        [HttpGet("Configurations/Status")]
+        public async Task<IActionResult> Status()
+        {
+            return Ok();
+        }
     }
 }
