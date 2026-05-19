@@ -12,6 +12,7 @@ namespace MongoAPI
             //Database database = new Mongo("mongodb://localhost:27017");
             //builder.Services.AddSingleton(database);
 
+
             builder.Services.Configure<Database>(builder.Configuration.GetSection("Database"));
 
             var Database = builder.Configuration.GetSection("Database").Get<Database>();
