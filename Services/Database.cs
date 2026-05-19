@@ -4,8 +4,8 @@ namespace MongoAPI.Services
 {
     public interface Database
     {
-        public string ConnectionString { get; set; }
-        public string DatabaseName { get; set; }
+        //public string ConnectionString { get; set; }
+        //public string DatabaseName { get; set; }
 
         public Task AddDeviceConfigAsync(Config config);
 
