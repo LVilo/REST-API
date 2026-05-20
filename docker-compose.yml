@@ -1,6 +1,8 @@
 ﻿services:
   mongo:
     image: mongo:7
+    expose:
+      - "27017"
     volumes:
       - Devices_Data:/data/db
     # порты можно не пробрасывать, если API в том же compose
