@@ -8,7 +8,15 @@ namespace MongoAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.WebHost.UseUrls("http://*:80", "https://*:443");
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenAnyIP(80);
+
+                options.ListenAnyIP(443, listenOptions =>
+                {
+                    listenOptions.UseHttps("cert.pfx", "password");
+                });
+            });
             var connectionString = builder.Configuration["Database:ConnectionString"];
             Database database = new Mongo(connectionString);
 
