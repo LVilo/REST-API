@@ -11,11 +11,6 @@ namespace MongoAPI
             builder.WebHost.ConfigureKestrel(options =>
             {
                 options.ListenAnyIP(80);
-
-                options.ListenAnyIP(443, listenOptions =>
-                {
-                    listenOptions.UseHttps("cert.pfx", "password");
-                });
             });
             var connectionString = builder.Configuration["Database:ConnectionString"];
             Database database = new Mongo(connectionString);
