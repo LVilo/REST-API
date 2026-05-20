@@ -15,4 +15,4 @@
       - mongo
 volumes:
   Devices_Data:
-  name: Devices_Data 
+    name: Devices_Data 
