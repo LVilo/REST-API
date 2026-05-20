@@ -7,8 +7,8 @@
   api:
     build: .
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "80:8080"
+      - "443:8081"
     environment:
       - Database__ConnectionString=mongodb://mongo:27017
     depends_on:
