@@ -8,7 +8,7 @@ namespace MongoAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.WebHost.UseUrls("http://*:80", "https://*:443");
             var connectionString = builder.Configuration["Database:ConnectionString"];
             Database database = new Mongo(connectionString);
 
