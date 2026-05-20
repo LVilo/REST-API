@@ -1,0 +1,16 @@
+﻿services:
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+    # порты можно не пробрасывать, если API в том же compose
+  api:
+    build: .
+    ports:
+      - "5000:80"
+    environment:
+      - Database__ConnectionString=mongodb://mongo:27017
+    depends_on:
+      - mongo
+volumes:
+  mongo_data:

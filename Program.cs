@@ -9,7 +9,9 @@ namespace MongoAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            Database database = new Mongo("mongodb://localhost:27017");
+            var connectionString = builder.Configuration["Database:ConnectionString"];
+            Database database = new Mongo(connectionString);
+
             builder.Services.AddSingleton(database);
 
 
