@@ -41,7 +41,7 @@ namespace MongoAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
             app.MapControllers();
