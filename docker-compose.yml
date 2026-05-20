@@ -9,7 +9,7 @@
   api:
     build: .
     ports:
-      - "31000:80"
+      - "31000:8080"
     environment:
       - Database__ConnectionString=mongodb://mongo:27017
     depends_on:
