@@ -1,14 +1,16 @@
-﻿using DynamicData.Kernel;
+﻿using Asp.Versioning;
+using DynamicData.Kernel;
 using Microsoft.AspNetCore.Mvc;
 using MongoAPI.Models;
 using MongoAPI.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MongoAPI.Controllers
+namespace MongoAPI.Controllers.V1
 {
     [ApiController]
-    [Route("[controller]")]
+    [ApiVersion("1")]
+    [Route("REST/v{version:apiVersion}/Configurations")]
     public class Controller : ControllerBase
     {
         private readonly Database _service;
@@ -18,12 +20,12 @@ namespace MongoAPI.Controllers
             _service = service;
         }
 
-        [HttpPost("Configurations/")]// добавить запись
+        [HttpPost]// добавить запись
         public async Task<IActionResult> AddDevice([FromBody] Config config)
         {
             if (config.Id is not null) return ValidationProblem("ID записывать не нужно");
             if (string.IsNullOrEmpty(config.DeviceFamily) || config.SerialNumber is 0 || string.IsNullOrEmpty(config.DeviceType)) return ValidationProblem("DeviceFamily,SerialNumber и DeviceType не могут быть null");
-            if(config.IsActual is true)
+            if (config.IsActual is true)
             {
                 List<Config> list = await _service.SearchAsync(50, config.SerialNumber, null, null, config.DeviceFamily, null, null, null, true);
                 if (list.Count > 0)
@@ -44,7 +46,7 @@ namespace MongoAPI.Controllers
         //    return Ok(devices);
         //}
 
-        //[HttpGet("Configurations/{Id}")]//получить запись по ID
+        //[HttpGet("C{Id}")]//получить запись по ID
         //public async Task<IActionResult> GetByID(string Id)
         //{
         //    var device = await _service.SearchAsync(1,Id);
@@ -58,21 +60,21 @@ namespace MongoAPI.Controllers
         //    if (device == null) return NotFound();
         //    return Ok(device);
         //}
-        [HttpGet("Configurations/last-serial/{deviceFamily}")] //получить последний серийный номер по названию семейства
+        [HttpGet("last-serial/{deviceFamily}")] //получить последний серийный номер по названию семейства
         public async Task<IActionResult> GetLastSerial(string deviceFamily)
         {
             var device = await _service.GetRecordMaxSerialNumberByFamilyAsync(deviceFamily);
             if (device == null) return NotFound();
             return Ok(device.SerialNumber);
         }
-        [HttpGet("Configurations/{ID}")] //получить запись по Id
+        [HttpGet("{ID}")] //получить запись по Id
         public async Task<IActionResult> GetRecordById(string ID)
         {
             var device = await _service.GetRecordByIdAsync(ID);
             if (device == null) return NotFound();
             return Ok(device);
         }
-        [HttpGet("Configurations/")]//поиск записей по параметрам
+        [HttpGet]//поиск записей по параметрам
         public async Task<List<Config>> Search(
             [FromQuery] int limit = 50,
             [FromQuery] uint? serialNumber = null,
@@ -86,18 +88,18 @@ namespace MongoAPI.Controllers
         {
             return await _service.SearchAsync(limit, serialNumber, orderNumber, deviceType, deviceFamily, username, date, arm, isActual);
         }
-        //[HttpPut("Configurations/{ID}")]
+        //[HttpPut("{ID}")]
         //public async Task<IActionResult> Put(string ID, [FromBody] Config config)
         //{
         //     if (config.Id is not null) return ValidationProblem("Изменение Id заблокировано");
         //    await _service.PutAsync(ID, config);
         //    return Ok();
         //}
-        [HttpDelete("Configurations/{ID}")]
+        [HttpDelete("{ID}")]
         public async Task<IActionResult> Delete(string ID)
         {
             Config device = await _service.GetRecordByIdAsync(ID);
-            if(device is null) return NotFound();
+            if (device is null) return NotFound();
             //device.IsActual = false;
             await _service.DeleteAsync(ID);
             return Ok();
@@ -109,3 +111,4 @@ namespace MongoAPI.Controllers
         }
     }
 }
+

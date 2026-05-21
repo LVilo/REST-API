@@ -1,5 +1,6 @@
 ﻿
 using MongoAPI.Services;
+using Asp.Versioning;
 
 namespace MongoAPI
 {
@@ -8,10 +9,20 @@ namespace MongoAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            //builder.WebHost.ConfigureKestrel(options =>
-            //{
-            //    options.ListenAnyIP(8080);
-            //});
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1);
+
+                // если версия не указана -> использовать v1
+                options.AssumeDefaultVersionWhenUnspecified = true;
+
+                // добавляет информацию о версиях в headers
+                options.ReportApiVersions = true;
+
+                // версия в URL
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            });
+
             var connectionString = builder.Configuration["Database:ConnectionString"];
             Database database = new Mongo(connectionString);
 
