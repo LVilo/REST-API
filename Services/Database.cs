@@ -17,7 +17,7 @@ namespace MongoAPI.Services
 
         public Task<Config> GetRecordMaxSerialNumberByFamilyAsync(string deviceFamily);
         public Task<List<Config>> SearchAsync(int limit, ulong ? serialNumber = null, string orderNumber = null,
-            string deviceType = null, string deviceFamily = null, string username = null, string date = null, string arm = null, bool? isActual = null);
+            string deviceType = null, string deviceFamily = null, string revision = null, string username = null, string date = null, string arm = null, bool? isActual = null);
         public Task PutAsync(string Id,Config config);
         public Task DeleteAsync(string Id);
         public Task<Config> GetRecordByIdAsync(string Id);

@@ -45,7 +45,7 @@ namespace MongoAPI.Services
                 .FirstOrDefaultAsync();
         }
         public async Task<List<Config>> SearchAsync(int limit, ulong? serialNumber = null, string orderNumber = null,
-            string deviceType = null, string deviceFamily = null, string username = null, string date = null, string arm = null, bool? isActual = null)
+            string deviceType = null, string deviceFamily = null, string revision = null, string username = null, string date = null, string arm = null, bool? isActual = null)
         {
             var filterBuilder = Builders<Config>.Filter;
             var filter = filterBuilder.Empty;
@@ -58,6 +58,8 @@ namespace MongoAPI.Services
                 filter &= filterBuilder.Eq(d => d.DeviceType, deviceType);
             if (!string.IsNullOrEmpty(deviceFamily))
                 filter &= filterBuilder.Eq(d => d.DeviceFamily, deviceFamily);
+            if (!string.IsNullOrEmpty(revision))
+                filter &= filterBuilder.Eq(d => d.Revision, revision);
             if (!string.IsNullOrEmpty(username))
                 filter &= filterBuilder.Eq(d => d.UserName, username);
             if (!string.IsNullOrEmpty(date))

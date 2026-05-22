@@ -17,6 +17,7 @@ namespace MongoAPI.Models
         public string Date { get; set; }
         public string DeviceFamily { get; set; }
         public string DeviceType { get; set; }
+        public string Revision { get; set; }
         public ulong SerialNumber { get; set; }
         public string OrderNumber { get; set; }
         public bool IsActual { get; set; } = true;

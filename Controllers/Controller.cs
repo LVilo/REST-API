@@ -27,7 +27,7 @@ namespace MongoAPI.Controllers.V1
             if (string.IsNullOrEmpty(config.DeviceFamily) || config.SerialNumber is 0 || string.IsNullOrEmpty(config.DeviceType)) return ValidationProblem("DeviceFamily,SerialNumber и DeviceType не могут быть null");
             if (config.IsActual is true)
             {
-                List<Config> list = await _service.SearchAsync(50, config.SerialNumber, null, null, config.DeviceFamily, null, null, null, true);
+                List<Config> list = await _service.SearchAsync(50, config.SerialNumber, null, null, config.DeviceFamily,null, null, null, null, true);
                 if (list.Count > 0)
                 {
                     return ValidationProblem("Не может быть одновременно две и более актуальных записей в базе данных с одинаковыми" +
@@ -81,12 +81,13 @@ namespace MongoAPI.Controllers.V1
             [FromQuery] string orderNumber = null,
             [FromQuery] string deviceType = null,
             [FromQuery] string deviceFamily = null,
+            [FromQuery] string revision = null,
             [FromQuery] string username = null,
             [FromQuery] string date = null,
             [FromQuery] string arm = null,
             [FromQuery] bool? isActual = true)
         {
-            return await _service.SearchAsync(limit, serialNumber, orderNumber, deviceType, deviceFamily, username, date, arm, isActual);
+            return await _service.SearchAsync(limit, serialNumber, orderNumber, deviceType, deviceFamily, revision, username, date, arm, isActual);
         }
         //[HttpPut("{ID}")]
         //public async Task<IActionResult> Put(string ID, [FromBody] Config config)
