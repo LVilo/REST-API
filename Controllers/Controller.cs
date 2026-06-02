@@ -24,7 +24,7 @@ namespace MongoAPI.Controllers.V1
         public async Task<IActionResult> AddDevice([FromBody] Config config)
         {
             if (config.Id is not null) return ValidationProblem("ID записывать не нужно");
-            if (string.IsNullOrEmpty(config.DeviceFamily) || config.SerialNumber is 0 || string.IsNullOrEmpty(config.DeviceType)) return ValidationProblem("DeviceFamily,SerialNumber и DeviceType не могут быть null");
+            if (string.IsNullOrEmpty(config.DeviceFamily) || config.SerialNumber is 0 || string.IsNullOrEmpty(config.DeviceType) || string.IsNullOrEmpty(config.Revision)) return ValidationProblem("DeviceFamily,SerialNumber,DeviceType и Revision не могут быть null");
             if (config.IsActual is true)
             {
                 List<Config> list = await _service.SearchAsync(50, config.SerialNumber, null, null, config.DeviceFamily,null, null, null, null, true);
