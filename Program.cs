@@ -47,11 +47,11 @@ namespace MongoAPI
             var app = builder.Build();
 
             // Включаем Swagger
-            if (app.Environment.IsDevelopment())
-            {
+            //if (app.Environment.IsDevelopment())
+            //{
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            //}
             //app.UseHttpsRedirection();
 
             app.UseAuthorization();
