@@ -116,7 +116,7 @@ namespace MongoAPI.Controllers.V1
             if (await _service.DeleteAsync(ID) is true) return Ok();
             else return Problem("Запись не была изменена");
         }
-        [HttpGet("Configurations/Status")]
+        [HttpGet("Status/")]
         public async Task<IActionResult> Status()
         {
             return Ok("OK");
