@@ -4,7 +4,7 @@
     expose:
       - "27017"
     volumes:
-      - Devices_Data:/data/db
+      - Devices_Data_test:/data/db
     # порты можно не пробрасывать, если API в том же compose
   api:
     build: .
@@ -15,5 +15,5 @@
     depends_on:
       - mongo
 volumes:
-  Devices_Data:
-    name: Devices_Data 
+  Devices_Data_test:
+    name: Devices_Data_test 
