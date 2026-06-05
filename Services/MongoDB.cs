@@ -18,7 +18,6 @@ namespace MongoAPI.Services
 
         public async Task AddDeviceConfigAsync(Config config)
         {
-
             await _collection.InsertOneAsync(config);
         }
 
@@ -71,20 +70,22 @@ namespace MongoAPI.Services
 
            return await _collection.Find(filter).Limit(limit).ToListAsync();
         }
-        public async Task PutAsync(string ID, Config config)
+        public async Task<bool> PutAsync(Config config)
         {
-            var filter = Builders<Config>.Filter.Eq(d => d.Id, ID);
+            var filter = Builders<Config>.Filter.Eq(d => d.Id, config.Id);
 
             //var update = Builders<Config>.Update.Set(,config);
-            config.Id = ID;
+            //config.Id = ID;
             //await _collection.UpdateOneAsync(filter, config);
            var result = await _collection.ReplaceOneAsync(filter, config);
+            return result.ModifiedCount > 0;
         }
-        public async Task DeleteAsync(string ID)
+        public async Task<bool> DeleteAsync(string ID)
         {
             var filter = Builders<Config>.Filter.Eq(d => d.Id, ID);
             var update = Builders<Config>.Update.Set(u => u.IsActual , false);
-            await _collection.UpdateOneAsync(filter, update);
+            var result = await _collection.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;
         }
         public Task<Config> GetRecordByIdAsync(string Id)
         {

@@ -37,7 +37,24 @@ namespace MongoAPI.Controllers.V1
             await _service.AddDeviceConfigAsync(config);
             return Ok(config.Id);
         }
-
+        [HttpPost("NewDevice/{deviceFamily}")]// добавить новое устройство
+        public async Task<IActionResult> AddNewDevice(string deviceFamily)
+        {
+            Config config = new Config();
+            config.DeviceFamily = deviceFamily;
+            var device = await _service.GetRecordMaxSerialNumberByFamilyAsync(config.DeviceFamily);
+            if (device is null) return Problem($"Не существует в базе данных семейства с именем '{deviceFamily}', добавьте запись в базу данных с помощью запроса 'Post REST/vx/Configurations' или добавьте запись вручную");
+            else config.SerialNumber = device.SerialNumber + 1;
+            await _service.AddDeviceConfigAsync(config);
+            return Ok(config);
+        }
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] Config config)
+        {
+            if (config.Id is null) return ValidationProblem("Id - null, невозможно изменить запись без этого параметра");
+            if(await _service.PutAsync(config) is true)return Ok();
+            else return Problem("Запись не была изменена");
+        }
         //[HttpGet("Configurations/records{serialNumber}")]//получить записи по серийному номеру
         //public async Task<IActionResult> GetBySerial(ulong serialNumber)
         //{
@@ -89,21 +106,15 @@ namespace MongoAPI.Controllers.V1
         {
             return await _service.SearchAsync(limit, serialNumber, orderNumber, deviceType, deviceFamily, revision, username, date, arm, isActual);
         }
-        //[HttpPut("{ID}")]
-        //public async Task<IActionResult> Put(string ID, [FromBody] Config config)
-        //{
-        //     if (config.Id is not null) return ValidationProblem("Изменение Id заблокировано");
-        //    await _service.PutAsync(ID, config);
-        //    return Ok();
-        //}
+        
         [HttpDelete("{ID}")]
         public async Task<IActionResult> Delete(string ID)
         {
             Config device = await _service.GetRecordByIdAsync(ID);
             if (device is null) return NotFound();
             //device.IsActual = false;
-            await _service.DeleteAsync(ID);
-            return Ok();
+            if (await _service.DeleteAsync(ID) is true) return Ok();
+            else return Problem("Запись не была изменена");
         }
         [HttpGet("Configurations/Status")]
         public async Task<IActionResult> Status()
