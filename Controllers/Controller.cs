@@ -40,6 +40,7 @@ namespace MongoAPI.Controllers.V1
         [HttpPost("NewDevice/")]// добавить новое устройство
         public async Task<IActionResult> AddNewDevice([FromBody] Config config)
         {
+            if (config.Id is not null) return ValidationProblem("ID записывать не нужно");
             var device = await _service.GetRecordMaxSerialNumberByFamilyAsync(config.DeviceFamily);
             if (device is null) return Problem($"Не существует в базе данных семейства с именем '{config.DeviceFamily}', добавьте запись в базу данных с помощью запроса 'Post REST/vx/Configurations' или добавьте запись вручную");
             else config.SerialNumber = device.SerialNumber + 1;
