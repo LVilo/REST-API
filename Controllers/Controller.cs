@@ -37,13 +37,11 @@ namespace MongoAPI.Controllers.V1
             await _service.AddDeviceConfigAsync(config);
             return Ok(config.Id);
         }
-        [HttpPost("NewDevice/{deviceFamily}")]// добавить новое устройство
-        public async Task<IActionResult> AddNewDevice(string deviceFamily)
+        [HttpPost("NewDevice/")]// добавить новое устройство
+        public async Task<IActionResult> AddNewDevice([FromBody] Config config)
         {
-            Config config = new Config();
-            config.DeviceFamily = deviceFamily;
             var device = await _service.GetRecordMaxSerialNumberByFamilyAsync(config.DeviceFamily);
-            if (device is null) return Problem($"Не существует в базе данных семейства с именем '{deviceFamily}', добавьте запись в базу данных с помощью запроса 'Post REST/vx/Configurations' или добавьте запись вручную");
+            if (device is null) return Problem($"Не существует в базе данных семейства с именем '{config.DeviceFamily}', добавьте запись в базу данных с помощью запроса 'Post REST/vx/Configurations' или добавьте запись вручную");
             else config.SerialNumber = device.SerialNumber + 1;
             await _service.AddDeviceConfigAsync(config);
             return Ok(config);
