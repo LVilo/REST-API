@@ -4,16 +4,16 @@
     expose:
       - "27017"
     volumes:
-      - Devices_Data_test:/data/db
+      - Devices_Data:/data/db
     # порты можно не пробрасывать, если API в том же compose
   api:
     build: .
     ports:
-      - "32000:8080"
+      - "31000:8080"
     environment:
       - Database__ConnectionString=mongodb://mongo:27017
     depends_on:
       - mongo
 volumes:
-  Devices_Data_test:
-    name: Devices_Data_test 
+  Devices_Data:
+    name: Devices_Data
