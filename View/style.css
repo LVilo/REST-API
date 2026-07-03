@@ -1,0 +1,142 @@
+:root
+{
+    --TopPanelHeight: 50px;
+}
+
+html, body{
+    height: 100%; 
+    margin: 0px;
+    padding: 0px;
+} 
+.body
+{
+    /* background: #1a97a0; */
+    height: 100%; 
+    flex-direction: row;
+    display: flex;
+    margin: 0px;
+    padding: 0px;
+}
+.AsidePanel
+{
+    flex-direction: column;
+    display: flex;
+    background: #219aa3;
+    width: 100%;
+    max-width: 300px;
+    min-width: 130px;
+    height: 100vh;
+}
+.TopPanel
+{
+    align-items: center;
+    justify-content: center;
+    background: #1a97a0;
+    flex-direction: row;
+    display: flex;
+    height: var(--TopPanelHeight);
+    min-height: var(--TopPanelHeight);
+}
+.MainPanel
+{
+    flex: 1;
+    flex-direction: column;
+    display: flex;
+    min-width: 200px;
+    width: 100%;
+}
+.LeftMenu
+{
+    margin: 0px 10px
+}
+.MainMenu
+{
+    border-top-width: 1px;
+    border-top-color: #38a4ac;
+    flex-direction: column;
+    display: flex;
+    border-radius: 8px;
+    background: #32a2aa;
+}
+.Main
+{
+    flex-direction: row;
+    display: flex;
+    background: #31a2aa;
+    width: 100%;
+    height: 100%;
+}
+
+.ButtonMenu
+{
+    color: #FFFFFF;
+    background: #32a2aa;
+    border: 0;
+    height: 30px;
+    margin: 0px;
+    border-radius: 8px;
+}
+.ButtonMenu:hover
+{
+    cursor: pointer;
+    background-color: #40a9b0;
+}
+.ButtonMenu:active
+{
+    background-color: #70bec4;
+}
+.ButtonMenu.active
+{
+    background-color: #70bec4;
+}
+.ButtonTopMenu
+{
+    color: #FFFFFF;
+    background: #1a97a0;
+    border: 0;
+    height: 30px;
+    margin: 0px;
+    border-radius: 8px;
+}
+.ButtonTopMenu:hover
+{
+    cursor: pointer;
+    background-color: #40a9b0;
+}
+.line
+{
+ border: none;
+ height: 1px;
+ width: 100%;
+ background-color: #38a4ac;
+ margin: 0px 0px 10px 0px;
+}
+.title
+{
+    cursor: pointer;
+    min-height: var(--TopPanelHeight);
+    height: var(--TopPanelHeight);
+    width: 100%;
+    max-width: 280px;
+    font-size: 28px;
+    background-color: #219aa3;
+    border-width: 0px;
+}
+.Records
+{
+    flex-direction: row;
+    display: flex;
+}
+.TreeDB
+{
+
+    background-color: #70bec4;
+    width: 150px;
+    height: calc(100vh - var(--TopPanelHeight));
+}
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+}
