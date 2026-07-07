@@ -1,5 +1,5 @@
-using System.Security.Claims;
-using System.IdentityModel.Tokens;
+﻿using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 using System.IdentityModel;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
@@ -35,8 +35,8 @@ namespace MongoAPI.Services
                 SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: "MyApi",
-                audience: "MyApi",
+                issuer: "MongoAPI",
+                audience: "MongoAPI",
                 claims: claims,
                 expires: DateTime.Now.AddHours(2),
                 signingCredentials: creds);

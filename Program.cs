@@ -29,6 +29,28 @@ namespace MongoAPI
             builder.Services.AddSingleton(database);
 
 
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters =
+                    new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        ValidIssuer = "MongoAPI",
+                        ValidAudience = "MongoAPI",
+
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(
+                                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+            });
+
+            //builder.Services.AddAuthorization();
+
             //builder.Services.Configure<Database>(builder.Configuration.GetSection("Database"));
 
             //var Database = builder.Configuration.GetSection("Database").Get<Database>();

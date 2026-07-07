@@ -16,6 +16,7 @@ namespace MongoAPI.Services
             Client = new MongoClient(connectionString);
             var database = Client.GetDatabase(databaseName);
             _collection = database.GetCollection<Config>(collectionName);
+            _user = database. GetCollection<User>("Users");
         }
 
         public async Task AddDeviceConfigAsync(Config config)
