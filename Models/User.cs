@@ -12,7 +12,8 @@ namespace MongoAPI.Models
         [BsonId(IdGenerator = typeof(StringObjectIdGenerator))]
         public string? Id { get; set; } = null;
 
-        public string Name { get; set; }
-        public string Password { get; set; }
+        public string Login { get; set; }
+        public string PasswordHash { get; set; }
+        public string  Role { get; set; }
     }
 }
