@@ -25,7 +25,27 @@ namespace MongoAPI
                 // версия в URL
                 options.ApiVersionReader = new UrlSegmentApiVersionReader();
             });
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters =
+                        new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
 
+                            ValidIssuer = "MyApi",
+                            ValidAudience = "MyApi",
+
+                            IssuerSigningKey =
+                                new SymmetricSecurityKey(
+                                    Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                        };
+                });
+
+            builder.Services.AddAuthorization();
             var connectionString = builder.Configuration["Database:ConnectionString"];
             Database database = new Mongo(connectionString);
 

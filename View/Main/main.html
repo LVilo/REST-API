@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="body">
+    <aside class="AsidePanel">
+        <button class="title">ТИК-БД</button>
+        <div class="LeftMenu">
+            <div class="line"></div>
+            <div class="MainMenu">
+                <button class="ButtonMenu" onclick="ShowTab('Records',this)">Просмотр записей</button>
+                <button class="ButtonMenu" onclick="ShowTab('Request',this)">Просмотр запросов</button>
+                <button class="ButtonMenu" onclick="ShowTab('Settings',this)">Настройки</button> 
+            </div>
+        </div>
+    </aside>
+    <div class=MainPanel>
+        <div class="TopPanel">
+            <button class="ButtonTopMenu">Кнопка 1</button>
+            <button class="ButtonTopMenu">Кнопка 2</button>
+            <button class="ButtonTopMenu">Кнопка 3</button>
+        </div>
+        <div class="Main" >
+            <div id="Records" classs="page">
+                <div class="Records">
+                    <div id="tree" Class="TreeDB">
+                        <h3>Базы данных</h3>
+                        <ul id="databaseTree"></ul>
+                        </div>
+                        <div class="ViewColection" id="Colection">
+                        <div id="filters" class="Filter">
+
+                            <h3>Фильтр</h3>
+
+                            <div id="filterContainer"></div>
+
+                            <button id="addFilter">
+                                Добавить
+                            </button>
+
+                            <button id="search">
+                                Поиск
+                            </button>
+
+                        </div>
+                        <table id="documents">
+
+                            <thead>
+
+                            <tr id="header"></tr>
+
+                            </thead>
+
+                            <tbody id="body"></tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="Request" class="page" style="display: none;">Содержимое запросов</div>
+            <div id="Settings" class="page" style="display: none;">Содержимое настроек</div>
+        </div>
+    </div>
+<script src="scripts.js"></script>
+</body>
+</html>

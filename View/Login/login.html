@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="stylelogin.css">
+</head>
+<body>
+    <dir id="auth_form">
+        <form id="auth_data" action="/login/auth" method="post">
+            <p>
+                <input type="text" placeholder="Логин" id="logintext" name="logintext">
+            </p>
+            <p>
+                <input type="password" placeholder="Пароль" id="password" name="password">
+            </p>
+
+            <input type="hidden" id="gmt" name="gmt" value="11">
+            <p></p>
+            <p>
+                <button id="registration">Регистрация</button>
+                <button id="login">Вход</button>
+            </p>
+            <script src="login_script.js"></script>
+        </form>
+    </dir>
+</body>
+</html>
