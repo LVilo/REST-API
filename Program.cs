@@ -25,27 +25,27 @@ namespace MongoAPI
                 // версия в URL
                 options.ApiVersionReader = new UrlSegmentApiVersionReader();
             });
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters =
-                        new TokenValidationParameters
-                        {
-                            ValidateIssuer = true,
-                            ValidateAudience = true,
-                            ValidateLifetime = true,
-                            ValidateIssuerSigningKey = true,
+            //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.TokenValidationParameters =
+            //            new TokenValidationParameters
+            //            {
+            //                ValidateIssuer = true,
+            //                ValidateAudience = true,
+            //                ValidateLifetime = true,
+            //                ValidateIssuerSigningKey = true,
 
-                            ValidIssuer = "MyApi",
-                            ValidAudience = "MyApi",
+            //                ValidIssuer = "MongoAPI",
+            //                ValidAudience = "MongoAPI",
 
-                            IssuerSigningKey =
-                                new SymmetricSecurityKey(
-                                    Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-                        };
-                });
+            //                IssuerSigningKey =
+            //                    new SymmetricSecurityKey(
+            //                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            //            };
+            //    });
 
-            builder.Services.AddAuthorization();
+            //builder.Services.AddAuthorization();
             var connectionString = builder.Configuration["Database:ConnectionString"];
             Database database = new Mongo(connectionString);
 
