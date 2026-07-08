@@ -1,6 +1,9 @@
 ﻿
 using MongoAPI.Services;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace MongoAPI
 {
@@ -52,7 +55,7 @@ namespace MongoAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             //}
-            //app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
 
             app.UseAuthorization();
             app.MapControllers();

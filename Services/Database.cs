@@ -4,6 +4,7 @@ namespace MongoAPI.Services
 {
     public interface Database
     {
+        public IUserService UserService { get; set; }
         //public string ConnectionString { get; set; }
         //public string DatabaseName { get; set; }
 
