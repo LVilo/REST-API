@@ -47,8 +47,7 @@ namespace MongoAPI.Services
             }
             catch (Exception ex)
             {
-                // Запишите в лог ex.Message и ex.StackTrace
-                throw; // или верните понятное сообщение
+                throw new Exception(ex.StackTrace); 
             }
         }
     }
