@@ -77,13 +77,13 @@ namespace MongoAPI.Controllers.V1
             }
         }
         [HttpPut("Role")]
-        public async Task<IActionResult> PutRole([FromBody] string id, [FromBody] string role)
+        public async Task<IActionResult> PutRole(UpdateRoleRequest request)
         {
-            if (await _service.UserService.SetRoleAsync(id, role) is true) return Ok();
+            if (await _service.UserService.SetRoleAsync(request.UserId, request.Role) is true) return Ok();
             else return Conflict();
         }
         [HttpGet("Users")]
-        public async Task<IActionResult> GetUsers([FromBody] string? role,[FromBody] int limit = 50)
+        public async Task<IActionResult> GetUsers([FromQuery] string? role, [FromQuery] int limit = 50)
         {
             List<User> users = await _service.UserService.GetALLAsync(role, limit);
             if (users.Count is 0) return NoContent();
