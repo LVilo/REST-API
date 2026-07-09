@@ -21,27 +21,35 @@ namespace MongoAPI.Services
 
         public string GenerateToken(User user)
         {
-            var claims = new[]
+            try
+            {
+                var claims = new[]
             {
                 new Claim(ClaimTypes.Name, user.Login),
                 new Claim(ClaimTypes.Role, user.Role)
             };
 
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+                var keyBytes = Convert.FromBase64String(_configuration["Jwt:Key"]);
+                var key = new SymmetricSecurityKey(keyBytes);
 
-            var creds = new SigningCredentials(
-                key,
-                SecurityAlgorithms.HmacSha256);
+                var creds = new SigningCredentials(
+                    key,
+                    SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                issuer: "MongoAPI",
-                audience: "MongoAPI",
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: creds);
+                var token = new JwtSecurityToken(
+                    issuer: "MongoAPI",
+                    audience: "MongoAPI",
+                    claims: claims,
+                    expires: DateTime.Now.AddHours(1),
+                    signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                return new JwtSecurityTokenHandler().WriteToken(token);
+            }
+            catch (Exception ex)
+            {
+                // Запишите в лог ex.Message и ex.StackTrace
+                throw; // или верните понятное сообщение
+            }
         }
     }
 }
