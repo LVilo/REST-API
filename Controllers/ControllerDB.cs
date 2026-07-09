@@ -39,7 +39,11 @@ namespace MongoAPI.Controllers
             {
                 List<BsonDocument> documents = await _service.GetRecords(request);
                 if (documents.Count is 0) return NoContent();
-                else return Ok(documents);
+                else
+                {
+                    var json = documents.Select(d => d.ToJson());
+                    return Ok(json);
+                }
             }
             catch (Exception ex)
             {
