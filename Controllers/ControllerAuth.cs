@@ -26,39 +26,53 @@ namespace MongoAPI.Controllers.V1
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequest request)
         {
-            var user = await _service.UserService.GetByLoginAsync(request.Login);
-
-            if (user == null)
-                return Unauthorized();
-
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-                return Unauthorized();
-
-            var token = _jwt.GenerateToken(user);
-
-            return Ok(new
+            try
             {
-                token = token
-            });
+                var user = await _service.UserService.GetByLoginAsync(request.Login);
+
+                if (user == null)
+                    return Unauthorized("Не существующий логин");
+
+                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                    return Unauthorized("Неверный пароль");
+
+                var token = _jwt.GenerateToken(user);
+
+                return Ok(new
+                {
+                    token = token
+                });
+            }
+            catch (Exception ex)
+            {
+                return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
+            }
         }
-        
+
         [HttpPost("Registration")]
         public async Task<IActionResult> Registration(LoginRequest request)
         {
-            var createduser = await _service.UserService.CreateAsync(request);
-
-            if (createduser is null)
-                return BadRequest($"Пользователь с логином \"{request.Login}\" уже существует.");
-
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, createduser.PasswordHash))
-                return Unauthorized();
-
-            var token = _jwt.GenerateToken(createduser);
-
-            return Ok(new
+            try
             {
-                token = token
-            });
+                var createduser = await _service.UserService.CreateAsync(request);
+
+                if (createduser is null)
+                    return BadRequest($"Пользователь с логином \"{request.Login}\" уже существует.");
+
+                if (!BCrypt.Net.BCrypt.Verify(request.Password, createduser.PasswordHash))
+                    return Unauthorized("Неверный пароль");
+
+                var token = _jwt.GenerateToken(createduser);
+
+                return Ok(new
+                {
+                    token = token
+                });
+            }
+            catch (Exception ex)
+            {
+                return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
+            }
         }
     }
 }
