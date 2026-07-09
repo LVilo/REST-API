@@ -24,7 +24,8 @@ namespace MongoAPI.Services
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, user.Login),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
             var key = new SymmetricSecurityKey(

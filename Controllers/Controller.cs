@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using DynamicData.Kernel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoAPI.Models;
 using MongoAPI.Services;
@@ -19,7 +20,8 @@ namespace MongoAPI.Controllers.V1
         {
             _service = service;
         }
-
+        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.APM)]
         [HttpPost]// добавить запись
         public async Task<IActionResult> AddDevice([FromBody] Config config)
         {
@@ -37,6 +39,8 @@ namespace MongoAPI.Controllers.V1
             await _service.AddDeviceConfigAsync(config);
             return Ok(config.Id);
         }
+        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.APM)]
         [HttpPost("NewDevice/")]// добавить новое устройство
         public async Task<IActionResult> AddNewDevice([FromBody] Config config)
         {
@@ -47,6 +51,8 @@ namespace MongoAPI.Controllers.V1
             await _service.AddDeviceConfigAsync(config);
             return Ok(config);
         }
+        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.APM)]
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] Config config)
         {
@@ -105,7 +111,9 @@ namespace MongoAPI.Controllers.V1
         {
             return await _service.SearchAsync(limit, serialNumber, orderNumber, deviceType, deviceFamily, revision, username, date, arm, isActual);
         }
-        
+
+        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.APM)]
         [HttpDelete("{ID}")]
         public async Task<IActionResult> Delete(string ID)
         {

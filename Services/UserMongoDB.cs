@@ -14,6 +14,32 @@ namespace MongoAPI.Services
         {
             var database = client.GetDatabase(databaseName);
             _user = database.GetCollection<User>("Users");
+
+            Task<User?> user1 = GetByLoginAsync("Admin");
+            if (user1 is null)
+            {
+                User user = new User
+                {
+                    Role = "Admin",
+                    Login = "Admin",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("123123")
+                };
+                _user.InsertOne(user);
+            }
+
+
+            Task<User?> user2 = GetByLoginAsync("APM");
+            if (user1 is null)
+            {
+                User user = new User
+                {
+                    Role = "APM",
+                    Login = "APM",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("DCBA")
+                };
+                _user.InsertOne(user);
+            }
+
         }
         public async Task<User?> GetByLoginAsync(string login)
         {

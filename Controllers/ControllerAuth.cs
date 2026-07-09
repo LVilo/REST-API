@@ -76,12 +76,14 @@ namespace MongoAPI.Controllers.V1
                 return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
             }
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPut("Role")]
         public async Task<IActionResult> PutRole(UpdateRoleRequest request)
         {
             if (await _service.UserService.SetRoleAsync(request.UserId, request.Role) is true) return Ok();
             else return Conflict();
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet("Users")]
         public async Task<IActionResult> GetUsers([FromQuery] string? role, [FromQuery] int limit = 50)
         {
