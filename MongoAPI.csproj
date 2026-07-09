@@ -27,7 +27,7 @@
     <Content Include="View\Login\stylelogin.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="View\Main\index.html">
+    <Content Include="View\Main\main.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="View\Main\scripts.js">
