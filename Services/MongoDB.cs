@@ -120,60 +120,60 @@ namespace MongoAPI.Services
             var cursor = await database.ListCollectionNamesAsync();
             return await cursor.ToListAsync();
         }
-        //public async Task<List<BsonDocument>> GetRecords(DocumentQueryRequest request)
-        //{
-        //    var database = Client.GetDatabase(request.Database);
-        //    var colection = database.GetCollection<BsonDocument>(request.Colection);
-        //    var filter = BuildFilter(request.Filters);
-        //    return await colection
-        //    .Find(filter)
-        //    .Skip((request.Page-1) * request.PageSize)
-        //    .Limit(request.PageSize)
-        //    .ToListAsync();
+        public async Task<List<BsonDocument>> GetRecords(DocumentQueryRequest request)
+        {
+            var database = Client.GetDatabase(request.Database);
+            var colection = database.GetCollection<BsonDocument>(request.Collection);
+            var filter = BuildFilter(request.Filters);
+            return await colection
+            .Find(filter)
+            .Skip((request.Page - 1) * request.PageSize)
+            .Limit(request.PageSize)
+            .ToListAsync();
 
-        //}
-        //public async Task<List<string>> GetFields(string databasename,string colectionname)
-        //{
-        //    var database = Client.GetDatabase(databasename);
-        //    var colection = database.GetCollection<BsonDocument>(colectionname);
-        //    var documents = await colection.Find(FilterDefinition<BsonDocument>.Empty).Limit(100).ToListAsync();
-        //    var fields = new HashSet<string>();
-        //    foreach(var document in documents)
-        //    {
-        //        foreach(var element in document.Elements)
-        //        {
-        //            fields.Add(element.Name);
-        //        }
-        //    }
-        //    return fields.OrderBy(f=>f).ToList();
-        //}
-        //public FilterDefinition<BsonDocument> BuildFilter(IEnumerable<FilterRequest> filters)
-        //{
-        //    var builder = Builders<BsonDocument>.Filter;
-        //    var filterList = new List<FilterDefinition<BsonDocument>>();
+        }
+        public async Task<List<string>> GetFields(string databasename, string colectionname)
+        {
+            var database = Client.GetDatabase(databasename);
+            var colection = database.GetCollection<BsonDocument>(colectionname);
+            var documents = await colection.Find(FilterDefinition<BsonDocument>.Empty).Limit(100).ToListAsync();
+            var fields = new HashSet<string>();
+            foreach (var document in documents)
+            {
+                foreach (var element in document.Elements)
+                {
+                    fields.Add(element.Name);
+                }
+            }
+            return fields.OrderBy(f => f).ToList();
+        }
+        public FilterDefinition<BsonDocument> BuildFilter(IEnumerable<FilterRequest> filters)
+        {
+            var builder = Builders<BsonDocument>.Filter;
+            var filterList = new List<FilterDefinition<BsonDocument>>();
 
-        //    foreach (var filter in filters)
-        //    {
-        //        var current = filter.Operator switch
-        //        {
-        //            "eq" => builder.Eq(filter.Field, BsonValue.Create(filter.Value)),
-        //            "gt" => builder.Gt(filter.Field, BsonValue.Create(filter.Value)),
-        //            "gte" => builder.Gte(filter.Field, BsonValue.Create(filter.Value)),
-        //            "lt" => builder.Lt(filter.Field, BsonValue.Create(filter.Value)),
-        //            "lte" => builder.Lte(filter.Field, BsonValue.Create(filter.Value)),
-        //            "contains" => builder.Regex(
-        //                filter.Field,
-        //                new BsonRegularExpression(filter.Value.ToString(), "i")),
-        //            _ => null // Skip unsupported operators
-        //        };
+            foreach (var filter in filters)
+            {
+                var current = filter.Operator switch
+                {
+                    "eq" => builder.Eq(filter.Field, BsonValue.Create(filter.Value)),
+                    "gt" => builder.Gt(filter.Field, BsonValue.Create(filter.Value)),
+                    "gte" => builder.Gte(filter.Field, BsonValue.Create(filter.Value)),
+                    "lt" => builder.Lt(filter.Field, BsonValue.Create(filter.Value)),
+                    "lte" => builder.Lte(filter.Field, BsonValue.Create(filter.Value)),
+                    "contains" => builder.Regex(
+                        filter.Field,
+                        new BsonRegularExpression(filter.Value.ToString(), "i")),
+                    _ => null // Skip unsupported operators
+                };
 
-        //        if (current != null)
-        //            filterList.Add(current);
-        //    }
+                if (current != null)
+                    filterList.Add(current);
+            }
 
-        //    return filterList.Any() 
-        //        ? builder.And(filterList) 
-        //        : builder.Empty;
-        //}
+            return filterList.Any()
+                ? builder.And(filterList)
+                : builder.Empty;
+        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using MongoAPI.Models;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace MongoAPI.Services
 {
@@ -22,5 +24,9 @@ namespace MongoAPI.Services
         public Task<bool> PutAsync(Config config);
         public Task<bool> DeleteAsync(string Id);
         public Task<Config> GetRecordByIdAsync(string Id);
+        public Task<List<DBObject>> GetDatabasesAsync();
+        public Task<List<BsonDocument>> GetRecords(DocumentQueryRequest request);
+        public FilterDefinition<BsonDocument> BuildFilter(IEnumerable<FilterRequest> filters);
+
     }
 }
