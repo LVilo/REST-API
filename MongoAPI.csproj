@@ -13,7 +13,6 @@
     <None Remove="View\Login\login.html" />
     <None Remove="View\Login\login_script.js" />
     <None Remove="View\Login\stylelogin.css" />
-    <None Remove="View\Main\main.html" />
     <None Remove="View\Main\scripts.js" />
     <None Remove="View\Main\style.css" />
   </ItemGroup>
@@ -28,7 +27,7 @@
     <Content Include="View\Login\stylelogin.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="View\Main\main.html">
+    <Content Include="View\Main\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="View\Main\scripts.js">
