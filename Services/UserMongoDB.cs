@@ -1,4 +1,5 @@
 ﻿using BCrypt.Net;
+using Microsoft.IdentityModel.Tokens;
 using MongoAPI.Models;
 using MongoDB.Driver;
 using System.ComponentModel.DataAnnotations;
@@ -34,10 +35,14 @@ namespace MongoAPI.Services
             }
             else return null;
         }
-        public async Task<List<User>> GetALLAsync(int limit = 50)
+        public async Task<List<User>> GetALLAsync(string? role,int limit = 50)
         {
             var filterBuilder = Builders<User>.Filter;
             var filter = filterBuilder.Empty;
+
+            if (!string.IsNullOrEmpty(role))
+                filter &= filterBuilder.Eq(d => d.Role, role);
+
             return await _user.Find(filter).Limit(limit).ToListAsync();
         }
         public async Task<bool> SetRoleAsync(string id, string role)
