@@ -48,7 +48,7 @@ namespace MongoAPI
             //builder.Services.AddAuthorization();
             var connectionString = builder.Configuration["Database:ConnectionString"];
             Database database = new Mongo(connectionString);
-
+            builder.Services.AddScoped<JwtService>();
             builder.Services.AddSingleton(database);
 
 
