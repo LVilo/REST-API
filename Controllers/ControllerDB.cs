@@ -24,12 +24,19 @@ namespace MongoAPI.Controllers
             if (tree.Count is 0) return NoContent();
             else return Ok(tree);
         }
-        [HttpPost("documents")]
+        [HttpPost("Documents")]
         public async Task<IActionResult> GetDocuments(DocumentQueryRequest request)
         {
             List<BsonDocument> documents = await _service.GetRecords(request);
             if (documents.Count is 0) return NoContent();
             else return Ok(documents);
+        }
+        [HttpPost("Fields")]
+        public async Task<IActionResult> GetFields(DocumentQueryRequest request)
+        {
+            List<string> Fields = await _service.GetFields(request);
+            if (Fields.Count is 0) return NoContent();
+            else return Ok(Fields);
         }
     }
 }

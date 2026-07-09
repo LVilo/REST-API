@@ -132,10 +132,10 @@ namespace MongoAPI.Services
             .ToListAsync();
 
         }
-        public async Task<List<string>> GetFields(string databasename, string colectionname)
+        public async Task<List<string>> GetFields(DocumentQueryRequest request)
         {
-            var database = Client.GetDatabase(databasename);
-            var colection = database.GetCollection<BsonDocument>(colectionname);
+            var database = Client.GetDatabase(request.Database);
+            var colection = database.GetCollection<BsonDocument>(request.Collection);
             var documents = await colection.Find(FilterDefinition<BsonDocument>.Empty).Limit(100).ToListAsync();
             var fields = new HashSet<string>();
             foreach (var document in documents)
