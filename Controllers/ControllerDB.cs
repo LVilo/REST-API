@@ -20,23 +20,47 @@ namespace MongoAPI.Controllers
         [HttpGet("Tree")]
         public async Task<IActionResult> GetTree()
         {
-            List<DBObject> tree = await _service.GetDatabasesAsync();
-            if (tree.Count is 0) return NoContent();
-            else return Ok(tree);
+            try
+            {
+                List<DBObject> tree = await _service.GetDatabasesAsync();
+                if (tree.Count is 0) return NoContent();
+                else return Ok(tree);
+            }
+            catch (Exception ex)
+            {
+                return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
+            }
+            
         }
         [HttpPost("Documents")]
         public async Task<IActionResult> GetDocuments(DocumentQueryRequest request)
         {
-            List<BsonDocument> documents = await _service.GetRecords(request);
-            if (documents.Count is 0) return NoContent();
-            else return Ok(documents);
+            try
+            {
+                List<BsonDocument> documents = await _service.GetRecords(request);
+                if (documents.Count is 0) return NoContent();
+                else return Ok(documents);
+            }
+            catch (Exception ex)
+            {
+                return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
+            }
+            
         }
         [HttpPost("Fields")]
         public async Task<IActionResult> GetFields(DocumentQueryRequest request)
         {
-            List<string> Fields = await _service.GetFields(request);
-            if (Fields.Count is 0) return NoContent();
-            else return Ok(Fields);
+            try
+            {
+                List<string> Fields = await _service.GetFields(request);
+                if (Fields.Count is 0) return NoContent();
+                else return Ok(Fields);
+            }
+            catch (Exception ex)
+            {
+                return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
+            }
+            
         }
     }
 }
