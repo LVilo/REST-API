@@ -16,8 +16,7 @@ namespace MongoAPI.Services
         }
         public async Task<User?> GetByLoginAsync(string login)
         {
-            var filter = Builders<User>.Filter.Eq(d => d.Login, login);
-            return _user.Find(filter).First();
+            return await _user.Find(d => d.Login == login).FirstOrDefaultAsync();
         }
         public async Task<User?> CreateAsync(LoginRequest request)
         {
