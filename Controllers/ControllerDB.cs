@@ -24,7 +24,7 @@ namespace MongoAPI.Controllers
             if (tree.Count is 0) return NoContent();
             else return Ok(tree);
         }
-        [HttpGet("documents")]
+        [HttpPost("documents")]
         public async Task<IActionResult> GetDocuments(DocumentQueryRequest request)
         {
             List<BsonDocument> documents = await _service.GetRecords(request);
