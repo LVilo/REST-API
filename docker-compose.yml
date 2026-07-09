@@ -19,7 +19,7 @@
     ports:
       - "8080:80"                  # внешний порт 8080 -> внутри 80
     volumes:
-      - ./View:/usr/share/nginx/html  # монтируем папку со страницами
+      - ./MongoAPI/View:/usr/share/nginx/html   # монтируем папку View
     depends_on:
       - api
 volumes:
