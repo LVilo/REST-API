@@ -1,4 +1,6 @@
-﻿namespace MongoAPI.Models
+﻿using System.Text.Json;
+
+namespace MongoAPI.Models
 {
     public class DocumentQueryRequest
     {
@@ -19,6 +21,6 @@
 
         public string Operator { get; set; }
 
-        public object Value { get; set; }
+        public JsonElement Value { get; set; }
     }
 }

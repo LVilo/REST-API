@@ -1,8 +1,6 @@
 ﻿using MongoAPI.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace MongoAPI.Services
 {
@@ -156,22 +154,16 @@ namespace MongoAPI.Services
 
             foreach (var filter in filters)
             {
-                if(filter == null || string.IsNullOrWhiteSpace(filter.Field) || filter.Value == null)
-            continue;
-
-                // Преобразуем значение в BsonValue
-                var bsonValue = ConvertToBsonValue(filter.Value);
-
                 var current = filter.Operator switch
                 {
-                    "eq" => builder.Eq(filter.Field, bsonValue),
-                    "ne" => builder.Ne(filter.Field, bsonValue),
-                    "gt" => builder.Gt(filter.Field, bsonValue),
-                    "gte" => builder.Gte(filter.Field, bsonValue),
-                    "lt" => builder.Lt(filter.Field, bsonValue),
-                    "lte" => builder.Lte(filter.Field, bsonValue),
-                    "contains" when bsonValue.IsString =>
-                        builder.Regex(filter.Field, new BsonRegularExpression(bsonValue.AsString, "i")),
+                    "eq" => builder.Eq(filter.Field, BsonValue.Create(filter.Value)),
+                    "gt" => builder.Gt(filter.Field, BsonValue.Create(filter.Value)),
+                    "gte" => builder.Gte(filter.Field, BsonValue.Create(filter.Value)),
+                    "lt" => builder.Lt(filter.Field, BsonValue.Create(filter.Value)),
+                    "lte" => builder.Lte(filter.Field, BsonValue.Create(filter.Value)),
+                    "contains" => builder.Regex(
+                        filter.Field,
+                        new BsonRegularExpression(filter.Value.ToString(), "i")),
                     _ => null // Skip unsupported operators
                 };
 
@@ -182,57 +174,6 @@ namespace MongoAPI.Services
             return filterList.Any()
                 ? builder.And(filterList)
                 : builder.Empty;
-        }
-        private static BsonValue ConvertToBsonValue(object value)
-        {
-            if (value == null)
-                return BsonNull.Value;
-
-            // Проверка на уже BsonValue
-            if (value is BsonValue bson)
-                return bson;
-
-            // Работа с JsonElement (System.Text.Json)
-            if (value is JsonElement jsonElement)
-            {
-                switch (jsonElement.ValueKind)
-                {
-                    case JsonValueKind.String:
-                        return new BsonString(jsonElement.GetString());
-                    case JsonValueKind.Number:
-                        if (jsonElement.TryGetInt32(out int i)) return new BsonInt32(i);
-                        if (jsonElement.TryGetInt64(out long l)) return new BsonInt64(l);
-                        return new BsonDouble(jsonElement.GetDouble());
-                    case JsonValueKind.True:
-                        return BsonBoolean.True;
-                    case JsonValueKind.False:
-                        return BsonBoolean.False;
-                    case JsonValueKind.Null:
-                        return BsonNull.Value;
-                    case JsonValueKind.Array:
-                        var array = new BsonArray();
-                        foreach (var item in jsonElement.EnumerateArray())
-                            array.Add(ConvertToBsonValue(item));
-                        return array;
-                    case JsonValueKind.Object:
-                        var doc = new BsonDocument();
-                        foreach (var prop in jsonElement.EnumerateObject())
-                            doc.Add(prop.Name, ConvertToBsonValue(prop.Value));
-                        return doc;
-                    default:
-                        return new BsonString(jsonElement.ToString());
-                }
-            }
-
-            // Для всех остальных типов полагаемся на стандартный механизм
-            try
-            {
-                return BsonValue.Create(value);
-            }
-            catch
-            {
-                return new BsonString(value.ToString());
-            }
         }
     }
 }
