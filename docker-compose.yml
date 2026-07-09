@@ -14,6 +14,14 @@
       - Database__ConnectionString=mongodb://mongo:27017
     depends_on:
       - mongo
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "8080:80"                  # внешний порт 8080 -> внутри 80
+    volumes:
+      - ./View:/usr/share/nginx/html  # монтируем папку со страницами
+    depends_on:
+      - api
 volumes:
   Devices_Data_test:
     name: Devices_Data_test 
