@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using MongoAPI.Models;
 using MongoDB.Driver;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Intrinsics.X86;
 
 namespace MongoAPI.Services
 {
@@ -14,32 +15,8 @@ namespace MongoAPI.Services
         {
             var database = client.GetDatabase(databaseName);
             _user = database.GetCollection<User>("Users");
-
-            Task<User?> user1 = GetByLoginAsync("Admin");
-            if (user1 is null)
-            {
-                User user = new User
-                {
-                    Role = "Admin",
-                    Login = "Admin",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("123123")
-                };
-                _user.InsertOne(user);
-            }
-
-
-            Task<User?> user2 = GetByLoginAsync("APM");
-            if (user1 is null)
-            {
-                User user = new User
-                {
-                    Role = "APM",
-                    Login = "APM",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("DCBA")
-                };
-                _user.InsertOne(user);
-            }
-
+            RegAdmin();
+            RegAPM();
         }
         public async Task<User?> GetByLoginAsync(string login)
         {
@@ -78,6 +55,33 @@ namespace MongoAPI.Services
             var result = await _user.UpdateOneAsync(filter, update);
             return result.ModifiedCount > 0;
         }
-
+        private async Task RegAdmin()
+        {
+            User? user1 = await GetByLoginAsync("Admin");
+            if (user1 is null)
+            {
+                User user = new User
+                {
+                    Role = "Admin",
+                    Login = "Admin",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("123123")
+                };
+                _user.InsertOne(user);
+            }
+        }
+        private async Task RegAPM()
+        {
+            User? user2 = await GetByLoginAsync("APM");
+            if (user2 is null)
+            {
+                User user = new User
+                {
+                    Role = "APM",
+                    Login = "APM",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("DCBA")
+                };
+                _user.InsertOne(user);
+            }
+        }
     }
 }
