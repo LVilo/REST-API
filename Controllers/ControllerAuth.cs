@@ -18,9 +18,10 @@ namespace MongoAPI.Controllers.V1
     {
         private readonly JwtService _jwt;
         private readonly Database _service;
-        public ControllerAuth(Database service)
+        public ControllerAuth(Database service, JwtService jwt)
         {
             _service = service;
+            _jwt = jwt;
         }
 
         [HttpPost("Login")]
