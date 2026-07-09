@@ -1,6 +1,7 @@
 ﻿using MongoAPI.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Text.Json;
 
 namespace MongoAPI.Services
 {
@@ -156,11 +157,11 @@ namespace MongoAPI.Services
             {
                 var current = filter.Operator switch
                 {
-                    "eq" => builder.Eq(filter.Field, BsonValue.Create(filter.Value)),
-                    "gt" => builder.Gt(filter.Field, BsonValue.Create(filter.Value)),
-                    "gte" => builder.Gte(filter.Field, BsonValue.Create(filter.Value)),
-                    "lt" => builder.Lt(filter.Field, BsonValue.Create(filter.Value)),
-                    "lte" => builder.Lte(filter.Field, BsonValue.Create(filter.Value)),
+                    "eq" => builder.Eq(filter.Field, ToBsonValue(filter.Value)),
+                    "gt" => builder.Gt(filter.Field, ToBsonValue(filter.Value)),
+                    "gte" => builder.Gte(filter.Field, ToBsonValue(filter.Value)),
+                    "lt" => builder.Lt(filter.Field, ToBsonValue(filter.Value)),
+                    "lte" => builder.Lte(filter.Field, ToBsonValue(filter.Value)),
                     "contains" => builder.Regex(
                         filter.Field,
                         new BsonRegularExpression(filter.Value.ToString(), "i")),
@@ -174,6 +175,30 @@ namespace MongoAPI.Services
             return filterList.Any()
                 ? builder.And(filterList)
                 : builder.Empty;
+        }
+        private static BsonValue ToBsonValue(JsonElement value)
+        {
+            return value.ValueKind switch
+            {
+                JsonValueKind.String => new BsonString(value.GetString()!),
+
+                JsonValueKind.Number when value.TryGetInt32(out var i)
+                    => new BsonInt32(i),
+
+                JsonValueKind.Number when value.TryGetInt64(out var l)
+                    => new BsonInt64(l),
+
+                JsonValueKind.Number
+                    => new BsonDouble(value.GetDouble()),
+
+                JsonValueKind.True => BsonBoolean.True,
+
+                JsonValueKind.False => BsonBoolean.False,
+
+                JsonValueKind.Null => BsonNull.Value,
+
+                _ => new BsonString(value.ToString())
+            };
         }
     }
 }
