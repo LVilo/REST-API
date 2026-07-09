@@ -10,6 +10,36 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="View\Login\login.html" />
+    <None Remove="View\Login\login_script.js" />
+    <None Remove="View\Login\stylelogin.css" />
+    <None Remove="View\Main\main.html" />
+    <None Remove="View\Main\scripts.js" />
+    <None Remove="View\Main\style.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="View\Login\login.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="View\Login\login_script.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="View\Login\stylelogin.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="View\Main\main.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="View\Main\scripts.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="View\Main\style.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="DynamicData" Version="9.4.31" />

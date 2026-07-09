@@ -4,7 +4,7 @@ const password_input = document.getElementById("password");
 const registration = document.getElementById("registration");
 const login = document.getElementById("login");
 
-const API_URL = 'http://REST/v1/Auth';
+const API_URL = 'http://nir.tik.local:32000/REST/v1/Auth';
 login.addEventListener('click', () =>
 {
   const LoginRequest =
@@ -17,7 +17,25 @@ login.addEventListener('click', () =>
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: LoginRequest 
+    })
+  .then(response => 
+  {
+    // Проверяем, успешен ли запрос
+    if (!response.ok)
+    {
+      throw new Error(`Ошибка HTTP: ${response.status}`);
+    }
+    return response.json(); // или response.text() для обычного текста
+  })
+  .then(data =>
+    {
+      console.log('Полученные данные:', data); // выводим в консоль
+    })
+  .catch(error =>
+    {
+      console.error('Ошибка запроса:', error);
     });
+    console.log();
 });
 
 registration.addEventListener('click', () => 
