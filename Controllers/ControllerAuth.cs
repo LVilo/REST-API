@@ -83,7 +83,7 @@ namespace MongoAPI.Controllers.V1
             else return Conflict();
         }
         [HttpGet("Users")]
-        public async Task<IActionResult> GetUsers([FromBody] string? role,[FromBody] int? limit = 50)
+        public async Task<IActionResult> GetUsers([FromBody] string? role,[FromBody] int limit = 50)
         {
             List<User> users = await _service.UserService.GetALLAsync(role, limit);
             if (users.Count is 0) return NoContent();
