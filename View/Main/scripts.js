@@ -1,3 +1,8 @@
+ShowRecords.addEventListener('click', () =>
+{
+    loadTree();
+});
+
 function ShowTab(divid,btn)
 {
     document.querySelectorAll(".page").forEach(page =>{
@@ -14,7 +19,7 @@ async function loadTree() {
 
     const tree = document.getElementById("databaseTree");
 
-    const databases = await fetch("/REST/v1/Database")
+    const databases = await fetch("/REST/v1/Collection/Tree")
         .then(r => r.json());
 
     tree.innerHTML = "";
@@ -51,7 +56,7 @@ async function selectCollection(db,collection){
 
     currentCollection=collection;
 
-    fields=await fetch(`/REST/v1/Database/Fields?${db}&${collection}`)
+    fields=await fetch(`/api/REST/v1/Collection/Fields?${db}&${collection}`)
         .then(r=>r.json());
 
     document.getElementById("filterContainer").innerHTML="";
@@ -117,7 +122,7 @@ document
 
         });
 
-    const response=await fetch("/api/explorer/documents",{
+    const response=await fetch("/api/REST/v1/Documents",{
 
         method:"POST",
 
