@@ -10,7 +10,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="View\index.html" />
       <None Remove="View\Login\login.html" />
       <None Remove="View\Login\login_script.js" />
       <None Remove="View\Login\stylelogin.css" />
@@ -19,9 +18,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="View\index.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <Content Include="View\Login\login.html">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
