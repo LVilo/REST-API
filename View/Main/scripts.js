@@ -19,7 +19,7 @@ async function loadTree() {
 
     const tree = document.getElementById("databaseTree");
 
-    const databases = await fetch("/REST/v1/Collection/Tree")
+    const databases = await fetch("/api/REST/v1/Collection/Tree")
         .then(r =>
         {
             console.log(r);
