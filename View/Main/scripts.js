@@ -52,12 +52,16 @@ let fields=[];
 
 async function selectCollection(db,collection){
 
-    currentDatabase=db;
-
-    currentCollection=collection;
-
-    fields=await fetch(`/api/REST/v1/Collection/Fields?${db}&${collection}`)
-        .then(r=>r.json());
+const FieldsRequest ={
+    database: db,
+    collection: collection,
+  }
+    fields=await fetch({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(FieldsRequest)
+    })
+    .then(r=>r.json());
 
     document.getElementById("filterContainer").innerHTML="";
 
