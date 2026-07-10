@@ -1,4 +1,4 @@
-const login_input = document.getElementById("logintext");
+﻿const login_input = document.getElementById("logintext");
 const password_input = document.getElementById("password");
 
 const registration = document.getElementById("registration");
@@ -8,8 +8,8 @@ login.addEventListener('click', () =>
 {
   const LoginRequest =
   {
-    Login: login_input.value,
-    Password: password_input.value,
+    login: login_input.value,
+    password: password_input.value,
   }
   fetch('/api/REST/v1/Auth/Login',
     {
