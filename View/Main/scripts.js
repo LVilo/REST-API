@@ -31,7 +31,7 @@ async function loadTree() {
 
         const ul = document.createElement("ul");
 
-        db.CollectionNames.forEach(collection => {
+        db.сollectionNames.forEach(collection => {
 
             const li = document.createElement("li");
             li.textContent = "📄 " + collection;
