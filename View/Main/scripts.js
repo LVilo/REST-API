@@ -56,7 +56,7 @@ const FieldsRequest ={
     database: db,
     collection: collection,
   }
-    const response = await fetch({
+    const response = await fetch('/api/REST/v1/Collection/Fields',{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(FieldsRequest)
