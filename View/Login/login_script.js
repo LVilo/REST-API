@@ -16,7 +16,7 @@ login.addEventListener('click', () =>
     {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: LoginRequest 
+        body: JSON.stringify(LoginRequest) 
     })
   .then(response => 
   {
