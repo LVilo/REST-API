@@ -38,7 +38,7 @@ async function loadTree() {
 
             li.onclick = () => selectCollection(db.databaseName, collection);
             li.style.cursor = 'pointer';
-            li.style.paddingLeft = "20px"
+            li.style.paddingLeft = "0px"
             ul.appendChild(li);
         });
         ul.style.paddingLeft = "20px"

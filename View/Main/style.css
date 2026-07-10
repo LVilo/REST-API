@@ -130,7 +130,7 @@ html, body{
 {
 
     background-color: #70bec4;
-    width: 150px;
+    width: 190px;
     height: calc(100vh - var(--TopPanelHeight));
 }
 table{
@@ -141,5 +141,5 @@ table{
 }
 #databaseTree
 {
-    padding-left: 10px;
+    padding-left: 20px;
 }
