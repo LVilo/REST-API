@@ -1,0 +1,10 @@
+﻿# Берём официальный образ Nginx
+FROM nginx:alpine
+
+# Копируем все файлы из папки View в стандартную папку веб-сервера
+COPY ./View /usr/share/nginx/html
+
+# (Опционально) Если нужно изменить конфигурацию Nginx — скопируйте свой default.conf
+# COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
+# Порты не открываем — это делает docker-compose
