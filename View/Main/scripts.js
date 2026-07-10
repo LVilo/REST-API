@@ -27,16 +27,16 @@ async function loadTree() {
     databases.forEach(db => {
 
         const dbLi = document.createElement("li");
-        dbLi.textContent = "📁 " + db.name;
+        dbLi.textContent = "📁 " + db.databaseName;
 
         const ul = document.createElement("ul");
 
-        db.сollectionNames.forEach(collection => {
+        db.collectionNames.forEach(collection => {
 
             const li = document.createElement("li");
             li.textContent = "📄 " + collection;
 
-            li.onclick = () => selectCollection(db.name, collection);
+            li.onclick = () => selectCollection(db.databaseName, collection);
 
             ul.appendChild(li);
         });
