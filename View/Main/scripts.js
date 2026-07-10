@@ -20,7 +20,11 @@ async function loadTree() {
     const tree = document.getElementById("databaseTree");
 
     const databases = await fetch("/REST/v1/Collection/Tree")
-        .then(r => r.json());
+        .then(r =>
+        {
+            console.log(r);
+            r.json();
+        });
 
     tree.innerHTML = "";
 
