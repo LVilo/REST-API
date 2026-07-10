@@ -139,3 +139,7 @@ table{
 
     border-collapse:collapse;
 }
+#databaseTree
+{
+    padding-left: 10px;
+}
