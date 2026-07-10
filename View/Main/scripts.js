@@ -53,7 +53,8 @@ let currentCollection="";
 let fields=[];
 
 async function selectCollection(db,collection){
-
+currentDatabase = db;
+currentCollection = collection;
 const FieldsRequest ={
     database: db,
     collection: collection,
@@ -63,8 +64,8 @@ const FieldsRequest ={
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(FieldsRequest)
     })
-    const fields = await response.json();   // fields — это массив строк
-
+    fields = await response.json();   // fields — это массив строк
+    
     document.getElementById("filterContainer").innerHTML="";
 
     addFilter();
