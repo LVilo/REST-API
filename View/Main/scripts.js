@@ -37,7 +37,7 @@ async function loadTree() {
             li.textContent = "📄 " + collection;
 
             li.onclick = () => selectCollection(db.databaseName, collection);
-
+            li.style.cursor = 'pointer';
             ul.appendChild(li);
         });
 
@@ -56,12 +56,12 @@ const FieldsRequest ={
     database: db,
     collection: collection,
   }
-    fields=await fetch({
+    const response = await fetch({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(FieldsRequest)
     })
-    .then(r=>r.json());
+    const fields = await response.json();   // fields — это массив строк
 
     document.getElementById("filterContainer").innerHTML="";
 
