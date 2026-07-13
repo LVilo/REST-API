@@ -144,7 +144,15 @@ namespace MongoAPI.Services
             if (documents.Count is 0)
             {
                 var bsonFilter = filter.ToBsonDocument();
-                Console.WriteLine($"фильтр - {bsonFilter.ToJson()}");
+
+                var serializerRegistry = BsonSerializer.SerializerRegistry;
+                var documentSerializer = serializerRegistry.GetSerializer<BsonDocument>(); // Config — ваш класс
+
+                // Рендерим фильтр в BsonDocument с помощью RenderArgs
+                var renderedFilter = filter.Render(new RenderArgs<BsonDocument>(documentSerializer, serializerRegistry));
+
+                Console.WriteLine(renderedFilter.ToJson());
+
                 Console.WriteLine($"документы - {documents.Any().ToJson()}");
             }
             return documents;
