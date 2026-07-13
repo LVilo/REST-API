@@ -131,7 +131,7 @@ namespace MongoAPI.Services
             .Find(filter)
             .Limit(request.Limit)
             .ToListAsync();
-            if (documents.Count is 0) Console.WriteLine(filter); 
+            if (documents.Count is 0) Console.WriteLine(filter.ToString()); 
             return documents;
 
         }
