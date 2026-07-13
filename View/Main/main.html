@@ -7,7 +7,7 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="body">
+<body>
     <aside class="AsidePanel">
         <button class="title">ТИК-БД</button>
         <div class="LeftMenu">
@@ -19,14 +19,14 @@
             </div>
         </div>
     </aside>
-    <div class=MainPanel>
-        <div class="TopPanel">
+    <main class=MainPanel>
+        <!-- <div class="TopPanel">
             <button class="ButtonTopMenu">Кнопка 1</button>
             <button class="ButtonTopMenu">Кнопка 2</button>
             <button class="ButtonTopMenu">Кнопка 3</button>
-        </div>
+        </div> -->
         <div class="Main" >
-            <div id="Records" classs="page">
+            <div id="Records" class="page">
                 <div class="Records">
                     <div id="tree" Class="TreeDB">
                         <h3>Базы данных</h3>
@@ -48,7 +48,7 @@
                             </button>
 
                         </div>
-                        <table id="documents">
+                        <!-- <table id="documents">
 
                             <thead>
 
@@ -58,14 +58,15 @@
 
                             <tbody id="body"></tbody>
 
-                        </table>
+                        </table> -->
+                        <div id="treeContainer"></div>
                     </div>
                 </div>
             </div>
             <div id="Request" class="page" style="display: none;">Содержимое запросов</div>
             <div id="Settings" class="page" style="display: none;">Содержимое настроек</div>
         </div>
-    </div>
+    </main>
 <script src="scripts.js"></script>
 </body>
 </html>

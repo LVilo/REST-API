@@ -22,7 +22,8 @@ namespace MongoAPI.Controllers
         {
             try
             {
-                List<DBObject> tree = await _service.GetDatabasesAsync();
+                var isAdmin = User.IsInRole("Admin");
+                List<DBObject> tree = await _service.GetDatabasesAsync(isAdmin);
                 if (tree.Count is 0) return NoContent();
                 else return Ok(tree);
             }
