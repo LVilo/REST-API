@@ -126,10 +126,13 @@ namespace MongoAPI.Services
             var database = Client.GetDatabase(request.Database);
             var colection = database.GetCollection<BsonDocument>(request.Collection);
             var filter = BuildFilter(request.Filters);
-            return await colection
+
+            List<BsonDocument> documents = await colection
             .Find(filter)
             .Limit(request.Limit)
             .ToListAsync();
+            if (documents.Count is 0) Console.WriteLine(filter); 
+            return documents;
 
         }
         public async Task<List<string>> GetFields(DocumentQueryRequest request)
