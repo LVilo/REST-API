@@ -11,7 +11,7 @@ login.addEventListener('click', () =>
     login: login_input.value,
     password: password_input.value,
   }
-  fetch('/api/REST/v1/Auth/Login',
+  fetch('http://nir.tik.local:32000/api/REST/v1/Auth/Login',
     {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
