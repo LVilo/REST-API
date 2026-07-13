@@ -177,7 +177,8 @@ namespace MongoAPI.Services
                         new BsonRegularExpression(filter.Value.ToString(), "i")),
                     _ => null // Skip unsupported operators
                 };
-
+                var rendered = current.ToBsonDocument();   // метод расширения
+                Console.WriteLine(rendered.ToJson());
                 if (current != null)
                     filterList.Add(current);
             }
