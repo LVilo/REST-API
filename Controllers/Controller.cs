@@ -96,6 +96,9 @@ namespace MongoAPI.Controllers.V1
             if (device == null) return NotFound();
             return Ok(device);
         }
+
+
+        
         [HttpGet]//поиск записей по параметрам
         public async Task<List<Config>> Search(
             [FromQuery] int limit = 50,

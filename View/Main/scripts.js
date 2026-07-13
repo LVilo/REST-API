@@ -19,7 +19,7 @@ async function loadTree() {
 
     const tree = document.getElementById("databaseTree");
 
-    const databases = await fetch("/api/REST/v1/Collection/Tree")
+    const databases = await fetch("http://nir.tik.local:32000/api/REST/v1/Collection/Tree")
         .then(r => r.json());
 
     tree.innerHTML = "";
@@ -59,7 +59,7 @@ const FieldsRequest ={
     database: db,
     collection: collection,
   }
-    const response = await fetch('/api/REST/v1/Collection/Fields',{
+    const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collection/Fields',{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(FieldsRequest)
@@ -109,51 +109,53 @@ function addFilter()
 document
 .getElementById("addFilter")
 .onclick=addFilter;
- async function search()
- {
-
-    const filters=[];
-
-    document.querySelectorAll(".filter-row")
-        .forEach(r=>{
-
-            filters.push({
-
-                field:r.querySelector(".field").value,
-
-                operator:r.querySelector(".operator").value,
-
-                value:r.querySelector(".value").value
-
-            });
-
+ async function search() {
+    const filters = [];
+    document.querySelectorAll(".filter-row").forEach(r => {
+        filters.push({
+            field: r.querySelector(".field").value,
+            operator: r.querySelector(".operator").value,
+            value: r.querySelector(".value").value
         });
-
-    const response=await fetch("/api/REST/v1/Documents",{
-
-        method:"POST",
-
-        headers:{
-
-            "Content-Type":"application/json"
-
-        },
-
-        body:JSON.stringify({
-
-            database:currentDatabase,
-
-            collection:currentCollection,
-
-            filters:filters
-
-        })
-
     });
 
-    const documents=await response.json();
+    try {
+        const response = await fetch("http://nir.tik.local:32000/api/REST/v1/Collection/Documents", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                database: currentDatabase,
+                collection: currentCollection,
+                filters: filters
+            })
+        });
 
-    renderTable(documents);
+        // 1. Проверка статуса ответа
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Ошибка HTTP ${response.status}: ${errorText}`);
+        }
+
+        // 2. Проверка, есть ли тело (защита от 204 No Content)
+        const contentLength = response.headers.get('content-length');
+        if (contentLength === '0' || response.status === 204) {
+            renderTable([]); // пустой результат
+            return;
+        }
+
+        // 3. Парсим JSON
+        let documents = await response.json();
+
+        // 4. Если сервер возвращает массив строк (JSON-строки документов), превращаем их в объекты
+        if (Array.isArray(documents) && documents.length > 0 && typeof documents[0] === 'string') {
+            documents = documents.map(doc => JSON.parse(doc));
+        }
+
+        renderTable(documents);
+    } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+        // Здесь можно показать сообщение пользователю
+    }
 }
 
 document

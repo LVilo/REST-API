@@ -128,8 +128,7 @@ namespace MongoAPI.Services
             var filter = BuildFilter(request.Filters);
             return await colection
             .Find(filter)
-            .Skip((request.Page - 1) * request.PageSize)
-            .Limit(request.PageSize)
+            .Limit(request.Limit)
             .ToListAsync();
 
         }
@@ -151,6 +150,7 @@ namespace MongoAPI.Services
         public FilterDefinition<BsonDocument> BuildFilter(IEnumerable<FilterRequest> filters)
         {
             var builder = Builders<BsonDocument>.Filter;
+            var filterb = builder.Empty;
             var filterList = new List<FilterDefinition<BsonDocument>>();
 
             foreach (var filter in filters)
