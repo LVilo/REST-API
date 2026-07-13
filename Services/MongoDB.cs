@@ -1,5 +1,7 @@
 ﻿using MongoAPI.Models;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using System.Text.Json;
 
@@ -131,7 +133,11 @@ namespace MongoAPI.Services
             .Find(filter)
             .Limit(request.Limit)
             .ToListAsync();
-            if (documents.Count is 0) Console.WriteLine(filter.ToString()); 
+            if (documents.Count is 0)
+            {
+                var bsonFilter = filter.ToBsonDocument();
+                Console.WriteLine(bsonFilter.ToJson());
+            }
             return documents;
 
         }
