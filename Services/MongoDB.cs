@@ -136,7 +136,8 @@ namespace MongoAPI.Services
             if (documents.Count is 0)
             {
                 var bsonFilter = filter.ToBsonDocument();
-                Console.WriteLine(bsonFilter.ToJson());
+                Console.WriteLine($"фильтр - {bsonFilter.ToJson()}");
+                Console.WriteLine($"документы - {documents.Any().ToJson()}");
             }
             return documents;
 
