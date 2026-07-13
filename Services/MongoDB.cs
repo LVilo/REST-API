@@ -73,8 +73,8 @@ namespace MongoAPI.Services
                 filter &= filterBuilder.Eq(d => d.Arm, arm);
             if (isActual.HasValue)
                 filter &= filterBuilder.Eq(d => d.IsActual, isActual.Value);
-            Console.WriteLine(filter.ToJson());
-           return await _devices.Find(filter).Limit(limit).ToListAsync();
+            Console.WriteLine(filter.ToBsonDocument().ToJson());
+            return await _devices.Find(filter).Limit(limit).ToListAsync();
         }
         public async Task<bool> PutAsync(Config config)
         {
