@@ -254,7 +254,7 @@ namespace MongoAPI.Services
         {
             var database = Client.GetDatabase(databasename);
             var collection = database.GetCollection<BsonDocument>(collectionname);
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(filterel["_id"].ToString()));
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", filterel["_id"].ToString());
 
             var bsonFilter = filter.ToBsonDocument();
 
