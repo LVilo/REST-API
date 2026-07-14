@@ -321,7 +321,10 @@ function renderTree(documents) {
         editBtn.className = 'edit-btn';
         editBtn.style.marginLeft = 'auto';
         editBtn.onclick = () => toggleEditMode(doc, docWrapper, index);
-        docHeader.appendChild(editBtn);
+        if(token !== "")
+        {
+            docHeader.appendChild(editBtn);
+        }
 
         // Кнопка сохранения (скрыта по умолчанию)
         const saveBtn = document.createElement('button');

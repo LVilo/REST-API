@@ -131,11 +131,14 @@ namespace MongoAPI.Controllers.V1
         {
             return Ok("OK");
         }
+
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost("Update/")]
         public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
         {
             var result = await _service.Update(request);
-            return Ok(result);
+            if(result.ModifiedCount > 0) return Ok();
+            else return BadRequest("Не обновленно");
         }
     }
 }
