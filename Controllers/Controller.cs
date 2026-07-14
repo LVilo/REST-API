@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoAPI.Models;
 using MongoAPI.Services;
+using MongoDB.Bson;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -136,11 +137,15 @@ namespace MongoAPI.Controllers.V1
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
         {
-            Console.WriteLine("Update");
-            var result = await _service.Update(request);
-            Console.WriteLine("Результат" + result.ToString());
-            if(result.ModifiedCount > 0) return Ok();
-            else return BadRequest("Не обновленно");
+            try
+            {
+                var result = await _service.Update(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
     }
 }
