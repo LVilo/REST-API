@@ -137,6 +137,7 @@ namespace MongoAPI.Controllers.V1
         public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
         {
             var result = await _service.Update(request);
+            Console.WriteLine(result);
             if(result.ModifiedCount > 0) return Ok();
             else return BadRequest("Не обновленно");
         }
