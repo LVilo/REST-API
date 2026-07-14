@@ -255,7 +255,18 @@ namespace MongoAPI.Services
             var database = Client.GetDatabase(databasename);
             var collection = database.GetCollection<BsonDocument>(collectionname);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(filterel["_id"].ToString()));
-            Console.WriteLine("filter " + filter.ToBsonDocument().ToJson());
+
+            var bsonFilter = filter.ToBsonDocument();
+
+            var serializerRegistry = BsonSerializer.SerializerRegistry;
+            var documentSerializer = serializerRegistry.GetSerializer<BsonDocument>(); // Config — ваш класс
+
+            // Рендерим фильтр в BsonDocument с помощью RenderArgs
+            var renderedFilter = filter.Render(new RenderArgs<BsonDocument>(documentSerializer, serializerRegistry));
+
+            Console.WriteLine(renderedFilter.ToJson());
+
+
             var update = new BsonDocument(updateel);
             return await collection.ReplaceOneAsync(filter, update);
         }
