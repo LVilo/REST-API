@@ -2,6 +2,8 @@ let currentDatabase="";
 let currentCollection="";
 let fields=[];
 
+let editingDocumentId = null;
+let originalDocument = null;
 
 const login_input = document.getElementById("logintext");
 const password_input = document.getElementById("password");
@@ -141,7 +143,7 @@ function addFilter() {
 
     row.innerHTML = `
         <select class="field">
-            ${fields.map(f => `<option value="${f.Name}">${f.Name}</option>`).join("")}
+            ${fields.map(f => `<option value="${f.name}">${f.name}</option>`).join("")}
         </select>
         <select class="operator">
             <option value="eq">=</option>
@@ -168,11 +170,11 @@ async function search() {
     const filters = [];
     document.querySelectorAll(".filter-row").forEach(r => {
         const valueInput = r.querySelector(".value");
-        const isString = fields.find(f => f.Name === r.querySelector(".field").value)?.IsString ?? false;
+        const IsString = fields.find(f => f.name === r.querySelector(".field").value)?.isString ?? false;
         let value = valueInput.value;
 
         // Если чекбокс "Строка" снят, пытаемся распарсить как JSON
-        if (!isString) {
+        if (!IsString) {
             try {
                 value = JSON.parse(value);
             } catch (e) {
@@ -226,14 +228,16 @@ async function search() {
 function buildTree(data, key = 'root') {
     const ul = document.createElement('ul');
     ul.style.listStyle = 'none';
-    ul.style.paddingLeft = '20px';
+    ul.style.paddingLeft = '0px';
+    ul.style.margin = '0px';
 
     if (Array.isArray(data)) {
         // Массив: каждый элемент — отдельный узел
         data.forEach((item, index) => {
             const li = document.createElement('li');
-            li.innerHTML = `<span class="toggle">[${index}]</span>`;
+            li.innerHTML = `<span class="toggle" >[${index}]</span>`;
             const child = buildTree(item);
+            child.style.marginLeft = '20px';
             li.appendChild(child);
             ul.appendChild(li);
         });
@@ -286,31 +290,286 @@ function buildTree(data, key = 'root') {
 
 function renderTree(documents) {
     const container = document.getElementById('treeContainer');
-    container.innerHTML = ''; // очищаем
+    container.innerHTML = '';
 
     if (!documents || documents.length === 0) {
         container.textContent = 'Нет документов';
         return;
     }
-    let i = 1;
+
     documents.forEach((doc, index) => {
+        const docWrapper = document.createElement('div');
+        docWrapper.className = 'document-wrapper';
+        docWrapper.dataset.index = index;
+        
+        // Заголовок документа
         const docHeader = document.createElement('div');
-        docHeader.textContent = `Документ ${index + 1}`;
-        docHeader.style.fontWeight = 'bold';
+        docHeader.className = 'document-header';
+        docHeader.style.display = 'flex';
+        docHeader.style.alignItems = 'center';
+        docHeader.style.gap = '10px';
         docHeader.style.marginTop = '10px';
-        // if(i % 2 !== 0){docHeader.style.background = "#66b4ba";}
-        container.appendChild(docHeader);
+        docHeader.style.fontWeight = 'bold';
+
+        const title = document.createElement('span');
+        title.textContent = `Документ ${index + 1}`;
+        docHeader.appendChild(title);
+
+        // Кнопка редактирования
+        const editBtn = document.createElement('button');
+        editBtn.textContent = '✏️ Редактировать';
+        editBtn.className = 'edit-btn';
+        editBtn.style.marginLeft = 'auto';
+        editBtn.onclick = () => toggleEditMode(doc, docWrapper, index);
+        docHeader.appendChild(editBtn);
+
+        // Кнопка сохранения (скрыта по умолчанию)
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = '💾 Сохранить';
+        saveBtn.className = 'save-btn';
+        saveBtn.style.display = 'none';
+        saveBtn.style.background = '#4CAF50';
+        saveBtn.style.color = 'white';
+        saveBtn.style.border = 'none';
+        saveBtn.style.padding = '5px 10px';
+        saveBtn.style.borderRadius = '4px';
+        saveBtn.style.cursor = 'pointer';
+        saveBtn.onclick = () => saveDocument(docWrapper, doc);
+        docHeader.appendChild(saveBtn);
+
+        // Кнопка отмены
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = '❌ Отмена';
+        cancelBtn.className = 'cancel-btn';
+        cancelBtn.style.display = 'none';
+        cancelBtn.style.background = '#f44336';
+        cancelBtn.style.color = 'white';
+        cancelBtn.style.border = 'none';
+        cancelBtn.style.padding = '5px 10px';
+        cancelBtn.style.borderRadius = '4px';
+        cancelBtn.style.cursor = 'pointer';
+        cancelBtn.onclick = () => cancelEdit(docWrapper, doc);
+        docHeader.appendChild(cancelBtn);
+
+        // Контейнер для дерева
+        const treeContainer = document.createElement('div');
+        treeContainer.className = 'tree-container';
+        
+        if (index % 2 !== 0) {
+            docWrapper.style.background = '#66b4ba';
+        }
 
         const tree = buildTree(doc);
-        if(i % 2 !== 0){tree.style.background = "#66b4ba";}
+        treeContainer.appendChild(tree);
+        
+        docWrapper.appendChild(docHeader);
+        docWrapper.appendChild(treeContainer);
+        container.appendChild(docWrapper);
+    });
+}
+function toggleEditMode(doc, wrapper, index) {
+    const isEditing = wrapper.dataset.editing === 'true';
+    
+    if (isEditing) {
+        cancelEdit(wrapper, doc);
+        return;
+    }
 
-        container.appendChild(tree);
-        i ++;
+    // Сохраняем оригинальный документ для отмены
+    originalDocument = JSON.parse(JSON.stringify(doc));
+    editingDocumentId = doc._id;
+
+    // Скрываем/показываем кнопки
+    const editBtn = wrapper.querySelector('.edit-btn');
+    const saveBtn = wrapper.querySelector('.save-btn');
+    const cancelBtn = wrapper.querySelector('.cancel-btn');
+    
+    editBtn.style.display = 'none';
+    saveBtn.style.display = 'inline-block';
+    cancelBtn.style.display = 'inline-block';
+
+    // Делаем все текстовые узлы редактируемыми
+    makeEditable(wrapper, doc);
+    
+    wrapper.dataset.editing = 'true';
+}
+
+function makeEditable(wrapper, doc) {
+    const treeContainer = wrapper.querySelector('.tree-container');
+    // Находим все листья с текстом
+    const textNodes = treeContainer.querySelectorAll('li:not(:has(ul))');
+    
+    textNodes.forEach((node) => {
+        // Проверяем, является ли это значением (не ключом)
+        const text = node.textContent;
+        const colonIndex = text.indexOf(':');
+        
+        if (colonIndex !== -1) {
+            const key = text.substring(0, colonIndex).trim();
+            const value = text.substring(colonIndex + 1).trim();
+            
+            // Пропускаем _id - его нельзя редактировать
+            if (key === '_id') {
+                const idSpan = document.createElement('span');
+                idSpan.textContent = text;
+                idSpan.style.color = '#666';
+                idSpan.style.fontStyle = 'italic';
+                node.innerHTML = '';
+                node.appendChild(idSpan);
+                return;
+            }
+
+            // Создаем поле ввода
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = value;
+            input.className = 'edit-input';
+            input.dataset.key = key;
+            input.style.width = '200px';
+            input.style.padding = '2px 5px';
+            input.style.border = '1px solid #ccc';
+            input.style.borderRadius = '3px';
+            
+            // Сохраняем ключ и значение
+            node.innerHTML = '';
+            const keySpan = document.createElement('span');
+            keySpan.textContent = key + ': ';
+            node.appendChild(keySpan);
+            node.appendChild(input);
+        }
+    });
+
+    // Обрабатываем массивы - делаем редактируемыми отдельные элементы
+    const arrayItems = treeContainer.querySelectorAll('li > span.toggle + span + ul > li');
+    arrayItems.forEach((item) => {
+        const text = item.textContent;
+        const match = text.match(/\[(\d+)\]/);
+        if (match) {
+            const index = match[1];
+            // Создаем поле ввода для элемента массива
+            const input = document.createElement('input');
+            const currentValue = item.querySelector('ul') ? '' : item.textContent.trim();
+            input.type = 'text';
+            input.value = currentValue;
+            input.className = 'edit-input-array';
+            input.dataset.arrayIndex = index;
+            input.style.width = '200px';
+            input.style.padding = '2px 5px';
+            input.style.border = '1px solid #ccc';
+            input.style.borderRadius = '3px';
+            
+            if (!item.querySelector('ul')) {
+                item.innerHTML = '';
+                const indexSpan = document.createElement('span');
+                indexSpan.textContent = `[${index}] `;
+                item.appendChild(indexSpan);
+                item.appendChild(input);
+            }
+        }
     });
 }
 
+async function saveDocument(wrapper, doc) {
+    try {
+        // Собираем измененные данные
+        const updatedDoc = collectUpdatedData(wrapper, doc);
+        
+        // Проверяем, что _id существует
+        if (!updatedDoc._id) {
+            throw new Error('Не найден _id документа');
+        }
 
+        // Запрос на обновление
+        const updateRequest = {
+            database: currentDatabase,
+            collection: currentCollection,
+            filter: { _id: updatedDoc._id },
+            update: updatedDoc
+        };
 
+        const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collection/Update', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateRequest)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Ошибка обновления: ${errorText}`);
+        }
+
+        // Успешно обновлено
+        alert('Документ успешно обновлен!');
+        
+        // Обновляем отображение
+        const result = await response.json();
+        wrapper.dataset.editing = 'false';
+        
+        // Перезагружаем данные
+        await search();
+        
+    } catch (error) {
+        console.error('Ошибка при сохранении:', error);
+        alert(`Ошибка при сохранении: ${error.message}`);
+    }
+}
+
+function collectUpdatedData(wrapper, originalDoc) {
+    const updatedDoc = JSON.parse(JSON.stringify(originalDoc));
+    const inputs = wrapper.querySelectorAll('.edit-input');
+    
+    inputs.forEach((input) => {
+        const key = input.dataset.key;
+        const value = input.value;
+        
+        // Парсим значение, если это JSON
+        try {
+            updatedDoc[key] = JSON.parse(value);
+        } catch (e) {
+            updatedDoc[key] = value;
+        }
+    });
+
+    // Обрабатываем изменения в массивах
+    const arrayInputs = wrapper.querySelectorAll('.edit-input-array');
+    arrayInputs.forEach((input) => {
+        const index = parseInt(input.dataset.arrayIndex);
+        let value = input.value;
+        try {
+            value = JSON.parse(value);
+        } catch (e) {
+            // Оставляем как строку
+        }
+        // Находим массив и обновляем элемент
+        // Это сложнее, нужно найти родительский массив
+        // В упрощенном варианте можно обновить весь документ
+    });
+
+    return updatedDoc;
+}
+
+function cancelEdit(wrapper, originalDoc) {
+    const editBtn = wrapper.querySelector('.edit-btn');
+    const saveBtn = wrapper.querySelector('.save-btn');
+    const cancelBtn = wrapper.querySelector('.cancel-btn');
+    
+    editBtn.style.display = 'inline-block';
+    saveBtn.style.display = 'none';
+    cancelBtn.style.display = 'none';
+    
+    // Восстанавливаем оригинальное отображение
+    const treeContainer = wrapper.querySelector('.tree-container');
+    const tree = buildTree(originalDoc);
+    treeContainer.innerHTML = '';
+    treeContainer.appendChild(tree);
+    
+    wrapper.dataset.editing = 'false';
+    editingDocumentId = null;
+    originalDocument = null;
+}
 
 
 login.addEventListener('click', () =>

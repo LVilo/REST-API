@@ -81,7 +81,6 @@ namespace MongoAPI.Services
             var renderedFilter = filter.Render(new RenderArgs<Config>(documentSerializer, serializerRegistry));
             Console.WriteLine(renderedFilter.ToJson());
 
-
             return await _devices.Find(filter).Limit(limit).ToListAsync();
         }
         public async Task<bool> PutAsync(Config config)
@@ -250,6 +249,14 @@ namespace MongoAPI.Services
 
                 _ => new BsonString(value.ToString())
             };
+        }
+        public async Task<ReplaceOneResult> Update( UpdateRequest request)
+        {
+            var database = Client.GetDatabase(request.Database);
+            var collection = database.GetCollection<BsonDocument>(request.Collection);
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(request.Filter["_id"].ToString()));
+            var update = new BsonDocument(request.Update);
+            return await collection.ReplaceOneAsync(filter, update);
         }
     }
 }

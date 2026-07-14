@@ -131,6 +131,12 @@ namespace MongoAPI.Controllers.V1
         {
             return Ok("OK");
         }
+        [HttpPost("Update/")]
+        public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
+        {
+            var result = await _service.Update(request);
+            return Ok(result);
+        }
     }
 }
 
