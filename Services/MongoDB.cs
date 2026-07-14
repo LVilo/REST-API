@@ -250,25 +250,14 @@ namespace MongoAPI.Services
                 _ => new BsonString(value.ToString())
             };
         }
-        public async Task<UpdateResult> Update(string databasename, string collectionname, BsonDocument filterel, BsonDocument updateel)
+        public async Task<ReplaceOneResult> Update(string databasename, string collectionname, BsonDocument filterel, BsonDocument updateel)
         {
             var database = Client.GetDatabase(databasename);
             var collection = database.GetCollection<BsonDocument>(collectionname);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", filterel["_id"].ToString());
 
-            var bsonFilter = filter.ToBsonDocument();
-
-            var serializerRegistry = BsonSerializer.SerializerRegistry;
-            var documentSerializer = serializerRegistry.GetSerializer<BsonDocument>(); // Config — ваш класс
-
-            // Рендерим фильтр в BsonDocument с помощью RenderArgs
-            var renderedFilter = filter.Render(new RenderArgs<BsonDocument>(documentSerializer, serializerRegistry));
-
-            Console.WriteLine(renderedFilter.ToJson());
-
-
             var update = new BsonDocument(updateel);
-            return await collection.UpdateOneAsync(filter, update);
+            return await collection.ReplaceOneAsync(filter, update);
         }
     }
 }
