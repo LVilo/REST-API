@@ -27,7 +27,7 @@ namespace MongoAPI.Services
         public Task<List<DBObject>> GetDatabasesAsync(bool isAdmin);
         public Task<List<BsonDocument>> GetRecords(DocumentQueryRequest request);
         public FilterDefinition<BsonDocument> BuildFilter(IEnumerable<FilterRequest> filters);
-        public Task<List<string>> GetFields(DocumentQueryRequest request);
+        public Task<List<Field>> GetFields(DocumentQueryRequest request);
 
     }
 }
