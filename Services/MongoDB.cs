@@ -250,7 +250,7 @@ namespace MongoAPI.Services
                 _ => new BsonString(value.ToString())
             };
         }
-        public async Task<ReplaceOneResult> Update(string databasename, string collectionname, BsonDocument filterel, BsonDocument updateel)
+        public async Task<UpdateResult> Update(string databasename, string collectionname, BsonDocument filterel, BsonDocument updateel)
         {
             var database = Client.GetDatabase(databasename);
             var collection = database.GetCollection<BsonDocument>(collectionname);
@@ -268,7 +268,7 @@ namespace MongoAPI.Services
 
 
             var update = new BsonDocument(updateel);
-            return await collection.ReplaceOneAsync(filter, update);
+            return await collection.UpdateOneAsync(filter, update);
         }
     }
 }

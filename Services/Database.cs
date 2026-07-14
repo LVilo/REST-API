@@ -29,7 +29,7 @@ namespace MongoAPI.Services
         public Task<List<BsonDocument>> GetRecords(DocumentQueryRequest request);
         public FilterDefinition<BsonDocument> BuildFilter(IEnumerable<FilterRequest> filters);
         public Task<List<Field>> GetFields(DocumentQueryRequest request);
-        public Task<ReplaceOneResult> Update(string database,string collection, BsonDocument filter, BsonDocument update);
+        public Task<UpdateResult> Update(string database,string collection, BsonDocument filter, BsonDocument update);
 
     }
 }
