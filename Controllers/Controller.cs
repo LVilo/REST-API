@@ -132,7 +132,7 @@ namespace MongoAPI.Controllers.V1
             return Ok("OK");
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        //[Authorize(Roles = Roles.Admin)]
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
         {
