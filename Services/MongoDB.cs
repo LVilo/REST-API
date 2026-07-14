@@ -250,13 +250,13 @@ namespace MongoAPI.Services
                 _ => new BsonString(value.ToString())
             };
         }
-        public async Task<ReplaceOneResult> Update( UpdateRequest request)
+        public async Task<ReplaceOneResult> Update(string databasename, string collectionname, BsonDocument filterel, BsonDocument updateel)
         {
-            var database = Client.GetDatabase(request.Database);
-            var collection = database.GetCollection<BsonDocument>(request.Collection);
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(request.Filter["_id"].ToString()));
+            var database = Client.GetDatabase(databasename);
+            var collection = database.GetCollection<BsonDocument>(collectionname);
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(filterel["_id"].ToString()));
             Console.WriteLine("filter " + filter.ToBson().ToJson().ToString());
-            var update = new BsonDocument(request.Update);
+            var update = new BsonDocument(updateel);
             return await collection.ReplaceOneAsync(filter, update);
         }
     }

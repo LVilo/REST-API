@@ -6,6 +6,7 @@ using MongoAPI.Models;
 using MongoAPI.Services;
 using MongoDB.Bson;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MongoAPI.Controllers.V1
@@ -135,11 +136,19 @@ namespace MongoAPI.Controllers.V1
 
         //[Authorize(Roles = Roles.Admin)]
         [HttpPost("Update")]
-        public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
+        public async Task<IActionResult> UpdateDocument([FromBody] JsonElement request)
         {
             try
             {
-                var result = await _service.Update(request);
+                // Конвертируем JsonElement в BsonDocument
+                var bsonDoc = BsonDocument.Parse(request.GetRawText());
+
+                var database = bsonDoc["database"].AsString;
+                var collection = bsonDoc["collection"].AsString;
+                var filter = bsonDoc["filter"].AsBsonDocument;
+                var update = bsonDoc["update"].AsBsonDocument;
+
+                var result = await _service.Update(database, collection, filter, update);
                 return Ok(result);
             }
             catch (Exception ex)

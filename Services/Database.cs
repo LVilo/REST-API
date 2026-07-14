@@ -1,6 +1,7 @@
 ﻿using MongoAPI.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using static System.Net.WebRequestMethods;
 
 namespace MongoAPI.Services
 {
@@ -28,7 +29,7 @@ namespace MongoAPI.Services
         public Task<List<BsonDocument>> GetRecords(DocumentQueryRequest request);
         public FilterDefinition<BsonDocument> BuildFilter(IEnumerable<FilterRequest> filters);
         public Task<List<Field>> GetFields(DocumentQueryRequest request);
-        public Task<ReplaceOneResult> Update( UpdateRequest request);
+        public Task<ReplaceOneResult> Update(string database,string collection, BsonDocument filter, BsonDocument update);
 
     }
 }
