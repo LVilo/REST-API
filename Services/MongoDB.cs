@@ -166,9 +166,11 @@ namespace MongoAPI.Services
             var collection = database.GetCollection<BsonDocument>(request.Collection);
 
             // Берём первые 100 документов для статистики
-            var documents = await collection.Find(FilterDefinition<BsonDocument>.Empty).Limit(100).ToListAsync();
+            var documents = await collection.Find(FilterDefinition<BsonDocument>.Empty)
+                                            .Limit(100)
+                                            .ToListAsync();
 
-            // Словарь: имя поля -> true, если все встреченные значения — строки
+            // Словарь: имя поля -> true, если поле может быть строкой
             var fieldIsString = new Dictionary<string, bool>();
 
             foreach (var document in documents)
@@ -176,16 +178,18 @@ namespace MongoAPI.Services
                 foreach (var element in document.Elements)
                 {
                     string name = element.Name;
-                    bool isString = element.Value.BsonType == BsonType.String;
+                    
+                    // Проверяем, является ли значение строкой ИЛИ null (который тоже может быть строкой)
+                    bool isString = element.Value.BsonType == BsonType.String || 
+                                element.Value.BsonType == BsonType.Null;
 
                     if (!fieldIsString.ContainsKey(name))
-                        fieldIsString[name] = isString;          // первое значение
+                        fieldIsString[name] = isString;
                     else
-                        fieldIsString[name] &= isString;         // если хоть раз false, останется false
+                        fieldIsString[name] &= isString;
                 }
             }
 
-            // Преобразуем в список
             return fieldIsString.Select(kvp => new Field
             {
                 Name = kvp.Key,
