@@ -68,7 +68,16 @@ body {
 }
 .ButtonMenu
 {
-    color: #FFFFFF;
+    color: #FFF;
+    background: #32a2aa;
+    border: 0;
+    height: 30px;
+    margin: 0px;
+    border-radius: 8px;
+}
+.ButtonMenuSetting
+{
+    color: #FFF;
     background: #32a2aa;
     border: 0;
     height: 30px;
@@ -85,6 +94,19 @@ body {
     background-color: #70bec4;
 }
 .ButtonMenu.active
+{
+    background-color: #70bec4;
+}
+.ButtonMenuSetting:hover
+{
+    cursor: pointer;
+    background-color: #40a9b0;
+}
+.ButtonMenuSetting:active
+{
+    background-color: #70bec4;
+}
+.ButtonMenuSetting.active
 {
     background-color: #70bec4;
 }
@@ -142,4 +164,23 @@ table{
 #databaseTree
 {
     padding-left: 20px;
+}
+.Setting
+{
+    flex-direction: row;
+    display: flex;
+}
+.MenuSetting {
+    position: fixed;            /* прилипает при прокрутке */
+    top: 0;                      /* к верхнему краю */
+    left: 300;
+    display: flex;
+    flex-direction: column;
+    background: #35a4aa;
+    width: 150px;                /* фиксированная ширина */
+    height: 100vh;               /* высота = высота окна */
+}
+.MainPanelSetting
+{
+    padding-left: 150px;
 }

@@ -40,10 +40,7 @@ namespace MongoAPI.Controllers.V1
 
                 var token = _jwt.GenerateToken(user);
 
-                return Ok(new
-                {
-                    token = token
-                });
+                return Ok(token);
             }
             catch (Exception ex)
             {

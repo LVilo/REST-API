@@ -63,8 +63,38 @@
                     </div>
                 </div>
             </div>
-            <div id="Request" class="page" style="display: none;">Содержимое запросов</div>
-            <div id="Settings" class="page" style="display: none;">Содержимое настроек</div>
+            <div id="Request" class="page" style="display: none;">
+                <div>
+
+                </div>
+            </div>
+            <div id="Settings" class="page" style="display: none;">
+                <div class="Setting">
+                    <div class="MenuSetting">
+                        <button class="ButtonMenuSetting" id="ShowAuth" onclick="ShowTabSetting('Auth',this)">Авторизация</button>
+                    </div>
+                    <div class="MainPanelSetting">
+                        <div class="pageSetting" id="Auth">
+                            <form id="auth_data" method="post">
+                                <p>
+                                    <input type="text" placeholder="Логин" id="logintext" name="logintext">
+                                </p>
+                                <p>
+                                    <input type="password" placeholder="Пароль" id="password" name="password">
+                                </p>
+
+                                <input type="hidden" id="gmt" name="gmt" value="11">
+                                <p></p>
+                                <p>
+                                    <button id="login">Вход</button>
+                                </p>
+                            </form>
+                        </div>
+                        <div class="pageSetting" style="display: none;"> </div>
+                        <div class="pageSetting" style="display: none;"> </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 <script src="scripts.js"></script>

@@ -1,7 +1,47 @@
+let currentDatabase="";
+let currentCollection="";
+let fields=[];
+
+
+const login_input = document.getElementById("logintext");
+const password_input = document.getElementById("password");
+
+const registration = document.getElementById("registration");
+const login = document.getElementById("login");
+let token = "";
+
+
+document
+.getElementById("addFilter")
+.onclick=addFilter;
+
+document
+.getElementById("search")
+.onclick=search;
+
+
 ShowRecords.addEventListener('click', () =>
 {
     loadTree();
 });
+
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem('token');
+  const headers = {
+  'Content-Type': 'application/json'
+};
+if (token) {
+  headers['Authorization'] = `Bearer ${token}`;
+}
+  return await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`
+    }
+  });
+}
+
 
 function ShowTab(divid,btn)
 {
@@ -15,11 +55,33 @@ function ShowTab(divid,btn)
     })
     btn.classList.add("active");
 }
+
+function ShowTabSetting(divid,btn)
+{
+    document.querySelectorAll(".pageSetting").forEach(page =>{
+        page.style.display = "none"
+    });
+    document.getElementById(divid).style.display = "block";
+
+    document.querySelectorAll(".ButtonMenuSetting").forEach(b =>{
+        b.classList.remove("active");
+    })
+    btn.classList.add("active");
+}
 async function loadTree() {
 
     const tree = document.getElementById("databaseTree");
 
-    const databases = await fetch("http://nir.tik.local:32000/api/REST/v1/Collection/Tree")
+    const databases = await fetch("http://nir.tik.local:32000/api/REST/v1/Collection/Tree",
+        {
+            method: 'GET',
+            headers:
+            {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        }
+    )
         .then(r => r.json());
 
     tree.innerHTML = "";
@@ -48,9 +110,7 @@ async function loadTree() {
 
     });
 }
-let currentDatabase="";
-let currentCollection="";
-let fields=[];
+
 
 async function selectCollection(db,collection){
 currentDatabase = db;
@@ -61,7 +121,11 @@ const FieldsRequest ={
   }
     const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collection/Fields',{
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: 
+        { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json' 
+        },
         body: JSON.stringify(FieldsRequest)
     })
     fields = await response.json();   // fields — это массив строк
@@ -102,9 +166,7 @@ function removeFilter(button) {
     }
 }
 
-document
-.getElementById("addFilter")
-.onclick=addFilter;
+
 async function search() {
     const filters = [];
     document.querySelectorAll(".filter-row").forEach(r => {
@@ -132,7 +194,9 @@ async function search() {
     try {
         const response = await fetch("http://nir.tik.local:32000/api/REST/v1/Collection/Documents", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                "Content-Type": "application/json" },
             body: JSON.stringify({
                 database: currentDatabase,
                 collection: currentCollection,
@@ -222,9 +286,7 @@ function buildTree(data, key = 'root') {
     ul.appendChild(li);
     return ul;
 }
-document
-.getElementById("search")
-.onclick=search;
+
 function renderTree(documents) {
     const container = document.getElementById('treeContainer');
     container.innerHTML = ''; // очищаем
@@ -249,3 +311,41 @@ function renderTree(documents) {
         i ++;
     });
 }
+
+
+
+
+
+login.addEventListener('click', () =>
+{
+  const LoginRequest =
+  {
+    login: login_input.value,
+    password: password_input.value,
+  }
+  fetch('http://nir.tik.local:32000/api/REST/v1/Auth/Login',
+    {
+        method: 'POST',
+        headers: { 
+        'Content-Type': 'application/json' },
+        body: JSON.stringify(LoginRequest) 
+    })
+  .then(response => 
+  {
+    // Проверяем, успешен ли запрос
+    if (!response.ok)
+    {
+      throw new Error(`Ошибка HTTP: ${response.status}`);
+    }
+    return response.json(); // или response.text() для обычного текста
+  })
+  .then(data =>
+    {
+      console.log('Полученные данные:', data); // выводим в консоль
+      token = data;
+    })
+  .catch(error =>
+    {
+      console.error('Ошибка запроса:', error);
+    });
+});
