@@ -11,6 +11,7 @@ login.addEventListener('click', () =>
     login: login_input.value,
     password: password_input.value,
   }
+  console.log('отправляемые данные:', JSON.stringify(LoginRequest) ); // выводим в консоль
   fetch('http://nir.tik.local:32000/api/REST/v1/Auth/Login',
     {
         method: 'POST',
