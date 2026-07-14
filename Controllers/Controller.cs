@@ -133,9 +133,10 @@ namespace MongoAPI.Controllers.V1
         }
 
         [Authorize(Roles = Roles.Admin)]
-        [HttpPost("Update/")]
+        [HttpPost("Update")]
         public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
         {
+            Console.WriteLine("Update");
             var result = await _service.Update(request);
             Console.WriteLine("Результат" + result.ToString());
             if(result.ModifiedCount > 0) return Ok();
