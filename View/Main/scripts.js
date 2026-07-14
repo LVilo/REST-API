@@ -128,7 +128,7 @@ const FieldsRequest ={
         },
         body: JSON.stringify(FieldsRequest)
     })
-    fields = await response.json();   // fields — это массив строк
+    fields = await response.json();   // fields — это массив объектов
     
     document.getElementById("filterContainer").innerHTML="";
 
@@ -141,7 +141,7 @@ function addFilter() {
 
     row.innerHTML = `
         <select class="field">
-            ${fields.map(x => `<option>${x}</option>`).join("")}
+            ${fields.map(f => `<option value="${f.Name}">${f.Name}</option>`).join("")}
         </select>
         <select class="operator">
             <option value="eq">=</option>
@@ -150,9 +150,6 @@ function addFilter() {
             <option value="lt"><</option>
         </select>
         <input class="value" placeholder="Значение">
-        <label>
-            <input type="checkbox" class="isString" checked> Строка
-        </label>
         <button class="delete-filter" onclick="removeFilter(this)">✕</button>
     `;
 
@@ -171,7 +168,7 @@ async function search() {
     const filters = [];
     document.querySelectorAll(".filter-row").forEach(r => {
         const valueInput = r.querySelector(".value");
-        const isString = r.querySelector(".isString").checked;
+        const isString = fields.find(f => f.Name === r.querySelector(".field").value)?.IsString ?? false;
         let value = valueInput.value;
 
         // Если чекбокс "Строка" снят, пытаемся распарсить как JSON
@@ -339,13 +336,16 @@ login.addEventListener('click', () =>
     }
     return response.json(); // или response.text() для обычного текста
   })
-  .then(data =>
-    {
-      console.log('Полученные данные:', data); // выводим в консоль
-      token = data;
-    })
-  .catch(error =>
-    {
-      console.error('Ошибка запроса:', error);
-    });
+  .then(data => {
+    console.log('Полученные данные:', data);
+    // Берём токен из поля token
+     token = data.token;
+    // console.log('Токен:', token);
+    // Сохраняем или используем 
+    // localStorage.setItem('token', token);
+    // alert('Вход выполнен!');
+})
+  .catch(error => {
+    console.error('Ошибка запроса:', error);
+});
 });

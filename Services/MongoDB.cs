@@ -160,20 +160,39 @@ namespace MongoAPI.Services
             return documents;
 
         }
-        public async Task<List<string>> GetFields(DocumentQueryRequest request)
+        public async Task<List<Field>> GetFields(DocumentQueryRequest request)
         {
             var database = Client.GetDatabase(request.Database);
-            var colection = database.GetCollection<BsonDocument>(request.Collection);
-            var documents = await colection.Find(FilterDefinition<BsonDocument>.Empty).Limit(100).ToListAsync();
-            var fields = new HashSet<string>();
+            var collection = database.GetCollection<BsonDocument>(request.Collection);
+
+            // Берём первые 100 документов для статистики
+            var documents = await collection.Find(FilterDefinition<BsonDocument>.Empty).Limit(100).ToListAsync();
+
+            // Словарь: имя поля -> true, если все встреченные значения — строки
+            var fieldIsString = new Dictionary<string, bool>();
+
             foreach (var document in documents)
             {
                 foreach (var element in document.Elements)
                 {
-                    fields.Add(element.Name);
+                    string name = element.Name;
+                    bool isString = element.Value.BsonType == BsonType.String;
+
+                    if (!fieldIsString.ContainsKey(name))
+                        fieldIsString[name] = isString;          // первое значение
+                    else
+                        fieldIsString[name] &= isString;         // если хоть раз false, останется false
                 }
             }
-            return fields.OrderBy(f => f).ToList();
+
+            // Преобразуем в список
+            return fieldIsString.Select(kvp => new Field
+            {
+                Name = kvp.Key,
+                IsString = kvp.Value
+            })
+            .OrderBy(f => f.Name)
+            .ToList();
         }
         public FilterDefinition<BsonDocument> BuildFilter(IEnumerable<FilterRequest> filters)
         {

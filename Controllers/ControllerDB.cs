@@ -57,7 +57,7 @@ namespace MongoAPI.Controllers
         {
             try
             {
-                List<string> Fields = await _service.GetFields(request);
+                List<Field> Fields = await _service.GetFields(request);
                 if (Fields.Count is 0) return NoContent();
                 else return Ok(Fields);
             }
