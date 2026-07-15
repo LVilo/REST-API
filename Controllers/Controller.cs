@@ -144,19 +144,11 @@ namespace MongoAPI.Controllers.V1
                 // var bsonDoc = BsonDocument.Parse(request.GetRawText());
 
 
-                BsonDocument filter;
-                if (request.Filter is JsonElement jsonElement)
-                {
+                
                     // Конвертируем JsonElement в строку JSON
-                    var filterJson = jsonElement.GetRawText();
-                    filter = BsonDocument.Parse(filterJson);
-                }
-                else
-                {
-                    // Если это уже объект
-                    var filterJson = JsonSerializer.Serialize(request.Filter);
-                    filter = BsonDocument.Parse(filterJson);
-                }
+                    var filterJson = request.Filter.GetRawText();
+                    BsonDocument filter = BsonDocument.Parse(filterJson);
+                
 
                 var result = await _service.Update(request.Database, request.Collection, filter, request.Changes);
                 return Ok(result);

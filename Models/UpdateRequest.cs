@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using System.Text.Json;
 
 namespace MongoAPI.Models
 {
@@ -6,7 +7,7 @@ namespace MongoAPI.Models
     {
         public string Database { get; set; }
         public string Collection { get; set; }
-        public object Filter { get; set; }
+        public JsonElement Filter { get; set; }
         public List<Change> Changes { get; set; }
     }
 
