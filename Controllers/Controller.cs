@@ -143,7 +143,7 @@ namespace MongoAPI.Controllers.V1
 
 
         [HttpGet]//поиск записей по параметрам
-        public async Task<List<Config>> Search(
+        public async Task<IActionResult> Search(
             [FromQuery] int limit = 50,
             [FromQuery] uint? serialNumber = null,
             [FromQuery] string orderNumber = null,
@@ -157,7 +157,8 @@ namespace MongoAPI.Controllers.V1
         {
             try
             {
-                return await _service.SearchAsync(limit, serialNumber, orderNumber, deviceType, deviceFamily, revision, username, date, arm, isActual);
+                List<Config> list = await _service.SearchAsync(limit, serialNumber, orderNumber, deviceType, deviceFamily, revision, username, date, arm, isActual);
+                return Ok(list);
             }
             catch (Exception ex)
             {
