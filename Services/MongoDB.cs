@@ -284,21 +284,21 @@ namespace MongoAPI.Services
 
             return await collection.UpdateOneAsync(filter, update);
         }
-        private BsonValue ConvertJsonElementToBsonValue(JsonElement element)
-        {
-            return element.ValueKind switch
-            {
-                JsonValueKind.String => new BsonString(element.GetString()),
-                JsonValueKind.Number => element.TryGetInt32(out int intVal)
-                    ? new BsonInt32(intVal)
-                    : new BsonDouble(element.GetDouble()),
-                JsonValueKind.True => new BsonBoolean(true),
-                JsonValueKind.False => new BsonBoolean(false),
-                JsonValueKind.Null => BsonNull.Value,
-                JsonValueKind.Object => BsonDocument.Parse(element.GetRawText()),
-                JsonValueKind.Array => BsonArray.Parse(element.GetRawText()),
-                _ => new BsonString(element.GetRawText())
-            };
-        }
+        //private BsonValue ConvertJsonElementToBsonValue(JsonElement element)
+        //{
+        //    return element.ValueKind switch
+        //    {
+        //        JsonValueKind.String => new BsonString(element.GetString()),
+        //        JsonValueKind.Number => element.TryGetInt32(out int intVal)
+        //            ? new BsonInt32(intVal)
+        //            : new BsonDouble(element.GetDouble()),
+        //        JsonValueKind.True => new BsonBoolean(true),
+        //        JsonValueKind.False => new BsonBoolean(false),
+        //        JsonValueKind.Null => BsonNull.Value,
+        //        JsonValueKind.Object => BsonDocument.Parse(element.GetRawText()),
+        //        JsonValueKind.Array => BsonArray.Parse(element.GetRawText()),
+        //        _ => new BsonString(element.GetRawText())
+        //    };
+        //}
     }
 }
