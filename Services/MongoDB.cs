@@ -250,13 +250,12 @@ namespace MongoAPI.Services
                 _ => new BsonString(value.ToString())
             };
         }
-        public async Task<UpdateResult> Update(string databasename, string collectionname, BsonDocument filter, BsonDocument update)
+        public async Task<UpdateResult> Update(string databasename, string collectionname, BsonDocument filter, List<Change> update)
         {
             var database = Client.GetDatabase(databasename);
             var collection = database.GetCollection<BsonDocument>(collectionname);
-            // var filter = Builders<BsonDocument>.Filter.Eq("_id", filterel["_id"].ToString());
 
-            // var update = new BsonDocument(updateel); 
+
             return await collection.UpdateOneAsync(filter, update);
         }
     }

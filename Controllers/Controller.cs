@@ -144,10 +144,8 @@ namespace MongoAPI.Controllers.V1
                 // var bsonDoc = BsonDocument.Parse(request.GetRawText());
 
                 var filter = BsonDocument.Parse(request.Filter.ToString());
-                var update = BsonDocument.Parse(request.Update.ToString());
 
-                var result = await _service.Update(request
-                .Database, request.Collection, filter, update);
+                var result = await _service.Update(request.Database, request.Collection, filter, request.Changes);
                 return Ok(result);
             }
             catch (Exception ex)

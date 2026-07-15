@@ -466,34 +466,29 @@ function makeEditable(wrapper, doc) {
 
 async function saveDocument(wrapper, doc) {
     try {
-        // Получаем оригинальный документ
         const originalDoc = doc;
         
-        // Собираем измененные данные
-        const updatedFields = collectChangedData(wrapper, originalDoc);
+        // Собираем изменения в виде массива { path, value }
+        const changes = collectChangesAsArray(wrapper, originalDoc);
         
-        // Проверяем, есть ли изменения
-        if (Object.keys(updatedFields).length === 0) {
+        if (changes.length === 0) {
             alert('Нет изменений для сохранения');
             return;
         }
         
-        // Проверяем, что _id существует
         if (!originalDoc._id) {
             throw new Error('Не найден _id документа');
         }
 
-        // Формируем запрос для UpdateOneAsync
+        // Формируем запрос с массивом изменений
         const updateRequest = {
             database: currentDatabase,
             collection: currentCollection,
             filter: { _id: originalDoc._id },
-            update: {
-                $set: updatedFields  // Используем $set для обновления только измененных полей
-            }
+            changes: changes  // Отправляем массив изменений
         };
 
-        console.log('Отправляем обновление:', updateRequest);
+        console.log('Отправляем изменения:', updateRequest);
 
         const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collection/Update', {
             method: 'POST',
@@ -509,14 +504,10 @@ async function saveDocument(wrapper, doc) {
             throw new Error(`Ошибка обновления: ${errorText}`);
         }
 
-        // Успешно обновлено
         const result = await response.json();
-        alert(`Документ успешно обновлен! Изменено полей: ${Object.keys(updatedFields).length}`);
+        alert(`Документ успешно обновлен! Изменено полей: ${changes.length}`);
         
-        // Обновляем отображение
         wrapper.dataset.editing = 'false';
-        
-        // Перезагружаем данные
         await search();
         
     } catch (error) {
@@ -525,10 +516,10 @@ async function saveDocument(wrapper, doc) {
     }
 }
 
-// Функция для сбора только измененных данных
-function collectChangedData(wrapper, originalDoc) {
+// Функция для сбора изменений в виде массива
+function collectChangesAsArray(wrapper, originalDoc) {
     const treeContainer = wrapper.querySelector('.tree-container');
-    const changedFields = {};
+    const changes = [];
     
     // Находим все поля ввода
     const inputs = treeContainer.querySelectorAll('.edit-input');
@@ -537,20 +528,22 @@ function collectChangedData(wrapper, originalDoc) {
         const key = input.dataset.key;
         const newValue = input.value.trim();
         
-        // Получаем оригинальное значение из документа
+        // Получаем оригинальное значение
         const originalValue = getValueByPath(originalDoc, key);
         
         // Проверяем, изменилось ли значение
         if (String(originalValue) !== newValue) {
-            // Преобразуем значение в правильный тип
-            changedFields[key] = convertValueType(newValue, originalValue);
+            changes.push({
+                path: key,
+                value: convertValueType(newValue, originalValue)
+            });
         }
     });
     
-    return changedFields;
+    return changes;
 }
 
-// Функция для получения значения по пути (поддерживает вложенные объекты)
+// Функция для получения значения по пути
 function getValueByPath(obj, path) {
     const keys = path.split('.');
     let current = obj;
@@ -568,33 +561,24 @@ function getValueByPath(obj, path) {
 
 // Функция для конвертации значения в правильный тип
 function convertValueType(newValue, originalValue) {
-    // Если оригинальное значение - число
     if (typeof originalValue === 'number') {
         const num = Number(newValue);
         return isNaN(num) ? newValue : num;
     }
-    
-    // Если оригинальное значение - булево
     if (typeof originalValue === 'boolean') {
         if (newValue.toLowerCase() === 'true') return true;
         if (newValue.toLowerCase() === 'false') return false;
         return newValue;
     }
-    
-    // Если оригинальное значение - дата
     if (originalValue instanceof Date) {
         const date = new Date(newValue);
         if (!isNaN(date)) return date;
         return newValue;
     }
-    
-    // Если оригинальное значение - null
     if (originalValue === null) {
         if (newValue === '' || newValue === 'null' || newValue === 'NULL') return null;
         return newValue;
     }
-    
-    // Возвращаем как строку
     return newValue;
 }
 
