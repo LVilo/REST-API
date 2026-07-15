@@ -250,11 +250,21 @@ namespace MongoAPI.Services
                 _ => new BsonString(value.ToString())
             };
         }
-        public async Task<UpdateResult> Update(string databasename, string collectionname, BsonDocument filter, List<Change> update)
+        public async Task<UpdateResult> Update(string databasename, string collectionname, BsonDocument filter, List<Change> changes)
         {
             var database = Client.GetDatabase(databasename);
             var collection = database.GetCollection<BsonDocument>(collectionname);
 
+
+            var updateBuilder = Builders<BsonDocument>.Update;
+            var updates = new List<UpdateDefinition<BsonDocument>>();
+
+            foreach (var change in changes)
+            {
+                // Используем BsonValue.Create для автоматической конвертации
+                updates.Add(updateBuilder.Set(change.Path, BsonValue.Create(change.Value)));
+            }
+            UpdateDefinition<BsonDocument> update = updateBuilder.Combine(updates);
 
             return await collection.UpdateOneAsync(filter, update);
         }
