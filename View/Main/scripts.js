@@ -399,11 +399,32 @@ function toggleEditMode(doc, wrapper, index) {
 
 function makeEditable(wrapper, doc) {
     const treeContainer = wrapper.querySelector('.tree-container');
-    // Находим все листья с текстом
+    
+    // Находим все листья с текстом, исключая элементы массивов
+    // Используем :not(:has(ul)) чтобы найти только конечные элементы
+    // и дополнительно проверяем, что элемент не находится внутри массива
     const textNodes = treeContainer.querySelectorAll('li:not(:has(ul))');
     
     textNodes.forEach((node) => {
-        // Проверяем, является ли это значением (не ключом)
+        // Проверяем, находится ли элемент внутри массива
+        // Ищем родительский элемент с классом toggle
+        let parent = node.parentElement;
+        let isInArray = false;
+        
+        while (parent && parent !== treeContainer) {
+            // Проверяем, есть ли у родителя или его siblings элемент с классом toggle
+            if (parent.previousElementSibling && parent.previousElementSibling.classList.contains('toggle')) {
+                isInArray = true;
+                break;
+            }
+            parent = parent.parentElement;
+        }
+        
+        // Если элемент внутри массива - пропускаем
+        if (isInArray) {
+            return;
+        }
+        
         const text = node.textContent;
         const colonIndex = text.indexOf(':');
         
@@ -421,7 +442,7 @@ function makeEditable(wrapper, doc) {
                 node.appendChild(idSpan);
                 return;
             }
-
+            
             // Создаем поле ввода
             const input = document.createElement('input');
             input.type = 'text';
@@ -441,54 +462,38 @@ function makeEditable(wrapper, doc) {
             node.appendChild(input);
         }
     });
-
-    // Обрабатываем массивы - делаем редактируемыми отдельные элементы
-    const arrayItems = treeContainer.querySelectorAll('li > span.toggle + span + ul > li');
-    arrayItems.forEach((item) => {
-        const text = item.textContent;
-        const match = text.match(/\[(\d+)\]/);
-        if (match) {
-            const index = match[1];
-            // Создаем поле ввода для элемента массива
-            const input = document.createElement('input');
-            const currentValue = item.querySelector('ul') ? '' : item.textContent.trim();
-            input.type = 'text';
-            input.value = currentValue;
-            input.className = 'edit-input-array';
-            input.dataset.arrayIndex = index;
-            input.style.width = '200px';
-            input.style.padding = '2px 5px';
-            input.style.border = '1px solid #ccc';
-            input.style.borderRadius = '3px';
-            
-            if (!item.querySelector('ul')) {
-                item.innerHTML = '';
-                const indexSpan = document.createElement('span');
-                indexSpan.textContent = `[${index}] `;
-                item.appendChild(indexSpan);
-                item.appendChild(input);
-            }
-        }
-    });
 }
 
 async function saveDocument(wrapper, doc) {
     try {
+        // Получаем оригинальный документ
+        const originalDoc = doc;
+        
         // Собираем измененные данные
-        const updatedDoc = collectUpdatedData(wrapper, doc);
+        const updatedFields = collectChangedData(wrapper, originalDoc);
+        
+        // Проверяем, есть ли изменения
+        if (Object.keys(updatedFields).length === 0) {
+            alert('Нет изменений для сохранения');
+            return;
+        }
         
         // Проверяем, что _id существует
-        if (!updatedDoc._id) {
+        if (!originalDoc._id) {
             throw new Error('Не найден _id документа');
         }
 
-        // Запрос на обновление
+        // Формируем запрос для UpdateOneAsync
         const updateRequest = {
             database: currentDatabase,
             collection: currentCollection,
-            filter: { _id: updatedDoc._id },
-            update: updatedDoc
+            filter: { _id: originalDoc._id },
+            update: {
+                $set: updatedFields  // Используем $set для обновления только измененных полей
+            }
         };
+
+        console.log('Отправляем обновление:', updateRequest);
 
         const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collection/Update', {
             method: 'POST',
@@ -505,10 +510,10 @@ async function saveDocument(wrapper, doc) {
         }
 
         // Успешно обновлено
-        alert('Документ успешно обновлен!');
+        const result = await response.json();
+        alert(`Документ успешно обновлен! Изменено полей: ${Object.keys(updatedFields).length}`);
         
         // Обновляем отображение
-        const result = await response.json();
         wrapper.dataset.editing = 'false';
         
         // Перезагружаем данные
@@ -520,6 +525,79 @@ async function saveDocument(wrapper, doc) {
     }
 }
 
+// Функция для сбора только измененных данных
+function collectChangedData(wrapper, originalDoc) {
+    const treeContainer = wrapper.querySelector('.tree-container');
+    const changedFields = {};
+    
+    // Находим все поля ввода
+    const inputs = treeContainer.querySelectorAll('.edit-input');
+    
+    inputs.forEach(input => {
+        const key = input.dataset.key;
+        const newValue = input.value.trim();
+        
+        // Получаем оригинальное значение из документа
+        const originalValue = getValueByPath(originalDoc, key);
+        
+        // Проверяем, изменилось ли значение
+        if (String(originalValue) !== newValue) {
+            // Преобразуем значение в правильный тип
+            changedFields[key] = convertValueType(newValue, originalValue);
+        }
+    });
+    
+    return changedFields;
+}
+
+// Функция для получения значения по пути (поддерживает вложенные объекты)
+function getValueByPath(obj, path) {
+    const keys = path.split('.');
+    let current = obj;
+    
+    for (const key of keys) {
+        if (current && typeof current === 'object' && key in current) {
+            current = current[key];
+        } else {
+            return undefined;
+        }
+    }
+    
+    return current;
+}
+
+// Функция для конвертации значения в правильный тип
+function convertValueType(newValue, originalValue) {
+    // Если оригинальное значение - число
+    if (typeof originalValue === 'number') {
+        const num = Number(newValue);
+        return isNaN(num) ? newValue : num;
+    }
+    
+    // Если оригинальное значение - булево
+    if (typeof originalValue === 'boolean') {
+        if (newValue.toLowerCase() === 'true') return true;
+        if (newValue.toLowerCase() === 'false') return false;
+        return newValue;
+    }
+    
+    // Если оригинальное значение - дата
+    if (originalValue instanceof Date) {
+        const date = new Date(newValue);
+        if (!isNaN(date)) return date;
+        return newValue;
+    }
+    
+    // Если оригинальное значение - null
+    if (originalValue === null) {
+        if (newValue === '' || newValue === 'null' || newValue === 'NULL') return null;
+        return newValue;
+    }
+    
+    // Возвращаем как строку
+    return newValue;
+}
+
 function collectUpdatedData(wrapper, originalDoc) {
     const updatedDoc = JSON.parse(JSON.stringify(originalDoc));
     const inputs = wrapper.querySelectorAll('.edit-input');
@@ -527,11 +605,13 @@ function collectUpdatedData(wrapper, originalDoc) {
     inputs.forEach((input) => {
         const key = input.dataset.key;
         const value = input.value;
-        
+
+        const IsString = fields.find(f => f.name === input.dataset.key)?.isString ?? false;
         // Парсим значение, если это JSON
-        try {
+        if(IsString === false){
             updatedDoc[key] = JSON.parse(value);
-        } catch (e) {
+        }
+        else{
             updatedDoc[key] = value;
         }
     });
