@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoAPI.Models;
 using MongoAPI.Services;
@@ -67,6 +68,7 @@ namespace MongoAPI.Controllers
             }
             
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
         {

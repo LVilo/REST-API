@@ -74,7 +74,7 @@ async function loadTree() {
 
     const tree = document.getElementById("databaseTree");
 
-    const databases = await fetch("http://nir.tik.local:32000/api/REST/v1/Collections/Tree",
+    const databases = await fetch("http://nir.tik.local:32000/api/REST/v1/Collection/Tree",
         {
             method: 'GET',
             headers:
@@ -121,7 +121,7 @@ const FieldsRequest ={
     database: db,
     collection: collection,
   }
-    const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collections/Fields',{
+    const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collection/Fields',{
         method: 'POST',
         headers: 
         { 
@@ -191,7 +191,7 @@ async function search() {
     });
 
     try {
-        const response = await fetch("http://nir.tik.local:32000/api/REST/v1/Collections/Documents", {
+        const response = await fetch("http://nir.tik.local:32000/api/REST/v1/Collection/Documents", {
             method: "POST",
             headers: { 
                 'Authorization': `Bearer ${token}`,
@@ -490,7 +490,7 @@ async function saveDocument(wrapper, doc) {
 
         console.log('Отправляем изменения:', updateRequest);
 
-        const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collections/Update', {
+        const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collection/Update', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

@@ -13,7 +13,7 @@ namespace MongoAPI.Controllers.V1
 {
     [ApiController]
     [ApiVersion("1")]
-    [Route("REST/v{version:apiVersion}/Configuration")]
+    [Route("REST/v{version:apiVersion}/Configurations")]
     public class Controller : ControllerBase
     {
         private readonly Database _service;
