@@ -30,9 +30,10 @@ namespace MongoAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
+                Console.WriteLine(ex.Message + ex.StackTrace);
+                return Problem(ex.Message);
             }
-            
+
         }
         [HttpPost("Documents")]
         public async Task<IActionResult> GetDocuments(DocumentQueryRequest request)
@@ -49,9 +50,10 @@ namespace MongoAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
+                Console.WriteLine(ex.Message + ex.StackTrace);
+                return Problem(ex.Message);
             }
-            
+
         }
         [HttpPost("Fields")]
         public async Task<IActionResult> GetFields(DocumentQueryRequest request)
@@ -64,9 +66,10 @@ namespace MongoAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
+                Console.WriteLine(ex.Message + ex.StackTrace);
+                return Problem(ex.Message);
             }
-            
+
         }
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("Update")]
@@ -79,8 +82,8 @@ namespace MongoAPI.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.StackTrace);
-                return BadRequest(new { error = ex.Message });
+                Console.WriteLine(ex.Message + ex.StackTrace);
+                return Problem(ex.Message);
             }
         }
     }

@@ -47,7 +47,8 @@ namespace MongoAPI.Controllers.V1
             }
             catch (Exception ex)
             {
-                return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
+                Console.WriteLine(ex.Message + ex.StackTrace);
+                return Problem(ex.Message);
             }
         }
 
@@ -73,7 +74,8 @@ namespace MongoAPI.Controllers.V1
             }
             catch (Exception ex)
             {
-                return Conflict($"Необработанное исключение {{{ex.StackTrace}}}");
+                Console.WriteLine(ex.Message + ex.StackTrace);
+                return Problem(ex.Message);
             }
         }
         [Authorize(Roles = Roles.Admin)]
@@ -87,9 +89,17 @@ namespace MongoAPI.Controllers.V1
         [HttpGet("Users")]
         public async Task<IActionResult> GetUsers([FromQuery] string? role, [FromQuery] int limit = 50)
         {
-            List<User> users = await _service.UserService.GetALLAsync(role, limit);
-            if (users.Count is 0) return NoContent();
-            else return Ok(users);
+            try
+            {
+                List<User> users = await _service.UserService.GetALLAsync(role, limit);
+                if (users.Count is 0) return NoContent();
+                else return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + ex.StackTrace);
+                return Problem(ex.Message);
+            }
         }
     }
 }
