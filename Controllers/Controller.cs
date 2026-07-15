@@ -22,8 +22,7 @@ namespace MongoAPI.Controllers.V1
         {
             _service = service;
         }
-        [Authorize(Roles = Roles.Admin)]
-        [Authorize(Roles = Roles.APM)]
+        [Authorize(Roles = $"{Roles.Admin},{Roles.APM}")]
         [HttpPost]// добавить запись
         public async Task<IActionResult> AddDevice([FromBody] Config config)
         {
@@ -50,8 +49,7 @@ namespace MongoAPI.Controllers.V1
                 return Problem(ex.Message);
             }
         }
-        [Authorize(Roles = Roles.Admin)]
-        [Authorize(Roles = Roles.APM)]
+        [Authorize(Roles = $"{Roles.Admin},{Roles.APM}")]
         [HttpPost("NewDevice/")]// добавить новое устройство
         public async Task<IActionResult> AddNewDevice([FromBody] Config config)
         {
@@ -70,8 +68,7 @@ namespace MongoAPI.Controllers.V1
                 return Problem(ex.Message);
             }
         }
-        [Authorize(Roles = Roles.Admin)]
-        [Authorize(Roles = Roles.APM)]
+        [Authorize(Roles = $"{Roles.Admin},{Roles.APM}")]
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] Config config)
         {
@@ -167,8 +164,7 @@ namespace MongoAPI.Controllers.V1
             }
         }
 
-        [Authorize(Roles = Roles.Admin)]
-        [Authorize(Roles = Roles.APM)]
+        [Authorize(Roles = $"{Roles.Admin},{Roles.APM}")]
         [HttpDelete("{ID}")]
         public async Task<IActionResult> Delete(string ID)
         {
