@@ -13,7 +13,7 @@ namespace MongoAPI.Controllers.V1
 {
     [ApiController]
     [ApiVersion("1")]
-    [Route("REST/v{version:apiVersion}/Configurations")]
+    [Route("REST/v{version:apiVersion}/Configuration")]
     public class Controller : ControllerBase
     {
         private readonly Database _service;
@@ -135,27 +135,7 @@ namespace MongoAPI.Controllers.V1
         }
 
         //[Authorize(Roles = Roles.Admin)]
-        [HttpPost("Update")]
-        public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
-        {
-            try
-            {
-                // Конвертируем JsonElement в BsonDocument
-                // var bsonDoc = BsonDocument.Parse(request.GetRawText());
-
-
-
-                
-
-                var result = await _service.Update(request.Database, request.Collection, request.Filter, request.Changes);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.StackTrace);
-                return BadRequest(new { error = ex.Message });
-            }
-        }
+        
     }
 }
 

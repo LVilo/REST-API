@@ -67,5 +67,19 @@ namespace MongoAPI.Controllers
             }
             
         }
+        [HttpPost("Update")]
+        public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
+        {
+            try
+            {
+                var result = await _service.Update(request.Database, request.Collection, request.Filter, request.Changes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 }
