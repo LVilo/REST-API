@@ -14,6 +14,6 @@ namespace MongoAPI.Models
     public class Change
     {
         public string Path { get; set; }
-        public object Value { get; set; }
+        public JsonElement Value { get; set; }
     }
 }

@@ -250,13 +250,29 @@ namespace MongoAPI.Services
                 _ => new BsonString(value.ToString())
             };
         }
-        public async Task<UpdateResult> Update(string databasename, string collectionname, BsonDocument filter, List<Change> changes)
+        public async Task<UpdateResult> Update(string databasename, string collectionname, JsonElement filterel, List<Change> changes)
         {
             var database = Client.GetDatabase(databasename);
             var collection = database.GetCollection<BsonDocument>(collectionname);
 
+            // Конвертируем JsonElement в строку JSON
+            var filterJson = filterel.GetRawText();
+            BsonDocument filter = BsonDocument.Parse(filterJson);
+
 
             var updateBuilder = Builders<BsonDocument>.Update;
+
+            //var convertedChanges = new List<Change>();
+            //foreach (var change in changes)
+            //{
+            //    var convertedChange = new Change
+            //    {
+            //        Path = change.Path,
+            //        Value = ConvertJsonElementToBsonValue(change.Value)
+            //    };
+            //    convertedChanges.Add(convertedChange);
+            //}
+
             var updates = new List<UpdateDefinition<BsonDocument>>();
 
             foreach (var change in changes)
@@ -267,6 +283,22 @@ namespace MongoAPI.Services
             UpdateDefinition<BsonDocument> update = updateBuilder.Combine(updates);
 
             return await collection.UpdateOneAsync(filter, update);
+        }
+        private BsonValue ConvertJsonElementToBsonValue(JsonElement element)
+        {
+            return element.ValueKind switch
+            {
+                JsonValueKind.String => new BsonString(element.GetString()),
+                JsonValueKind.Number => element.TryGetInt32(out int intVal)
+                    ? new BsonInt32(intVal)
+                    : new BsonDouble(element.GetDouble()),
+                JsonValueKind.True => new BsonBoolean(true),
+                JsonValueKind.False => new BsonBoolean(false),
+                JsonValueKind.Null => BsonNull.Value,
+                JsonValueKind.Object => BsonDocument.Parse(element.GetRawText()),
+                JsonValueKind.Array => BsonArray.Parse(element.GetRawText()),
+                _ => new BsonString(element.GetRawText())
+            };
         }
     }
 }

@@ -136,7 +136,7 @@ namespace MongoAPI.Controllers.V1
 
         //[Authorize(Roles = Roles.Admin)]
         [HttpPost("Update")]
-        public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest  request)
+        public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
         {
             try
             {
@@ -144,18 +144,15 @@ namespace MongoAPI.Controllers.V1
                 // var bsonDoc = BsonDocument.Parse(request.GetRawText());
 
 
-                
-                    // Конвертируем JsonElement в строку JSON
-                    var filterJson = request.Filter.GetRawText();
-                    BsonDocument filter = BsonDocument.Parse(filterJson);
+
                 
 
-                var result = await _service.Update(request.Database, request.Collection, filter, request.Changes);
+                var result = await _service.Update(request.Database, request.Collection, request.Filter, request.Changes);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(new { error = ex.Message + ex.StackTrace });
             }
         }
     }
