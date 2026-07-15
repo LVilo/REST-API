@@ -152,7 +152,8 @@ namespace MongoAPI.Controllers.V1
             }
             catch (Exception ex)
             {
-                return BadRequest(new { error = ex.Message + ex.StackTrace });
+                Console.WriteLine(ex.StackTrace);
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

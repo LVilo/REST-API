@@ -295,7 +295,7 @@ namespace MongoAPI.Services
                 JsonValueKind.True => new BsonBoolean(true),
                 JsonValueKind.False => new BsonBoolean(false),
                 JsonValueKind.Null => BsonNull.Value,
-                JsonValueKind.Object => BsonDocument.Parse(element.GetRawText())
+                JsonValueKind.Object => BsonDocument.Parse(element.GetRawText()),
                 _ => new BsonString(element.GetRawText())
             };
         }
