@@ -74,7 +74,7 @@ async function loadTree() {
 
     const tree = document.getElementById("databaseTree");
 
-    const databases = await fetch("http://nir.tik.local:32000/api/REST/v1/Collection/Tree",
+    const databases = await fetch("/api/REST/v1/Collection/Tree",
         {
             method: 'GET',
             headers:
@@ -121,7 +121,7 @@ const FieldsRequest ={
     database: db,
     collection: collection,
   }
-    const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collection/Fields',{
+    const response = await fetch('/api/REST/v1/Collection/Fields',{
         method: 'POST',
         headers: 
         { 
@@ -191,7 +191,7 @@ async function search() {
     });
 
     try {
-        const response = await fetch("http://nir.tik.local:32000/api/REST/v1/Collection/Documents", {
+        const response = await fetch("/api/REST/v1/Collection/Documents", {
             method: "POST",
             headers: { 
                 'Authorization': `Bearer ${token}`,
@@ -490,7 +490,7 @@ async function saveDocument(wrapper, doc) {
 
         console.log('Отправляем изменения:', updateRequest);
 
-        const response = await fetch('http://nir.tik.local:32000/api/REST/v1/Collection/Update', {
+        const response = await fetch('/api/REST/v1/Collection/Update', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -646,7 +646,7 @@ login.addEventListener('click', () =>
     login: login_input.value,
     password: password_input.value,
   }
-  fetch('http://nir.tik.local:32000/api/REST/v1/Auth/Login',
+  fetch('/api/REST/v1/Auth/Login',
     {
         method: 'POST',
         headers: { 
@@ -656,6 +656,7 @@ login.addEventListener('click', () =>
   .then(response => 
   {
     // Проверяем, успешен ли запрос
+    if(response.status === 403)
     if (!response.ok)
     {
       throw new Error(`Ошибка HTTP: ${response.status}`);
@@ -669,9 +670,9 @@ login.addEventListener('click', () =>
     // console.log('Токен:', token);
     // Сохраняем или используем 
     // localStorage.setItem('token', token);
-    // alert('Вход выполнен!');
+    alert('Вход выполнен!');
 })
   .catch(error => {
-    console.error('Ошибка запроса:', error);
+    alert('Ошибка запроса:', error);
 });
 });
