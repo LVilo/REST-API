@@ -4,16 +4,16 @@ using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace MongoAPI.Models.Json
 {
-    public class Schema
+    public class CollectionInfo
     {
         [BsonId(IdGenerator = typeof(StringObjectIdGenerator))]
         public string Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
 
-        public int Version { get; set; } = 1;
+        public string SchemaId { get; set; }
 
-        public List<SchemaField> Fields { get; set; } = new();
+        public int SchemaVersion { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

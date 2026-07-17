@@ -6,8 +6,8 @@ namespace MongoAPI.Models.Json
 {
     public class Document
     {
-        [BsonId(IdGenerator = typeof(ObjectIdGenerator))]
-        public ObjectId Id { get; set; }
+        [BsonId(IdGenerator = typeof(StringObjectIdGenerator))]
+        public string Id { get; set; }
 
         public BsonDocument Data { get; set; } = new();
 

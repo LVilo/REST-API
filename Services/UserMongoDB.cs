@@ -11,9 +11,9 @@ namespace MongoAPI.Services
     {
         private readonly IMongoCollection<User> _user;
 
-        public UserMongoDB(MongoClient client, string databaseName)
+        public UserMongoDB(IMongoDatabase database)
         {
-            var database = client.GetDatabase(databaseName);
+            //var database = client.GetDatabase(databaseName);
             _user = database.GetCollection<User>("Users");
             RegAdmin();
             RegAPM();
