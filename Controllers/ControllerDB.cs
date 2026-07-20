@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoAPI.Models;
+using MongoAPI.Models.Requests;
 using MongoAPI.Services;
 using MongoDB.Bson;
 
@@ -10,7 +11,7 @@ namespace MongoAPI.Controllers
     [ApiController]
     [ApiVersion("1")]
     [Route("REST/v{version:apiVersion}/Collection")]
-    public class ControllerDB : ControllerBase
+    public class ControllerDB : Controller
     {
         private readonly Database _service;
 
@@ -21,63 +22,27 @@ namespace MongoAPI.Controllers
         [HttpGet("Tree")]
         public async Task<IActionResult> GetTree()
         {
-            try
-            {
-                var isAdmin = User.IsInRole("Admin");
-                List<DBObject> tree = await _service.GetDatabasesAsync(isAdmin);
-                if (tree.Count is 0) return NoContent();
-                else return Ok(tree);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + ex.StackTrace);
-                return Problem(ex.Message);
-            }
+            var isAdmin = User.IsInRole("Admin");
+            return await Try(() => _service.GetDatabasesAsync(isAdmin));
 
         }
         [HttpPost("Documents")]
         public async Task<IActionResult> GetDocuments(DocumentQueryRequest request)
         {
-            try
-            {
-                List<BsonDocument> documents = await _service.GetRecords(request);
-                if (documents.Count is 0) return NoContent();
-                else
-                {
-                    var json = documents.Select(d => d.ToJson());
-                    return Ok(json);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + ex.StackTrace);
-                return Problem(ex.Message);
-            }
-
+            return await Try(() => _service.GetRecords(request));
         }
         [HttpPost("Fields")]
-        public async Task<IActionResult> GetFields(DocumentQueryRequest request)
+        public async Task<IActionResult> GetFields(string collection)
         {
-            try
-            {
-                List<Field> Fields = await _service.GetFields(request);
-                if (Fields.Count is 0) return NoContent();
-                else return Ok(Fields);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + ex.StackTrace);
-                return Problem(ex.Message);
-            }
-
+            return await Try(() => _service.GetFieldsAsync(collection));
         }
         [Authorize(Roles = Roles.Admin)]
-        [HttpPost("Update")]
-        public async Task<IActionResult> UpdateDocument([FromBody] UpdateRequest request)
+        [HttpPost("Replace")]
+        public async Task<IActionResult> ReplaceDocument([FromBody] RequestDocument request)
         {
             try
             {
-                var result = await _service.Update(request.Database, request.Collection, request.Filter, request.Changes);
+                var result = await _service.ReplaceDocumentAsync(request);
                 return Ok(result);
             }
             catch (Exception ex)

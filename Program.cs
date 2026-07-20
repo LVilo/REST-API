@@ -62,7 +62,7 @@ namespace MongoAPI
 
             // Добавляем контроллеры
             builder.Services.AddControllers();
-
+            
             // Добавляем Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

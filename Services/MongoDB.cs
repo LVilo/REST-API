@@ -122,27 +122,28 @@ namespace MongoAPI.Services
         //    var filter = Builders<Config>.Filter.Eq(d => d.Id, Id);
         //    return _devices.Find(filter).FirstAsync();
         //}
-        //public async Task<List<DBObject>> GetDatabasesAsync(bool isAdmin)
-        //{
-        //    var cursor = await Client.ListDatabaseNamesAsync();
-        //    List<string> databases = await cursor.ToListAsync();
-        //    if (databases.Count > 0)
-        //    {
-        //        List<DBObject> dBObjects = new List<DBObject>();
-        //        foreach (var item in databases)
-        //        {
-        //            if ((item is "admin" || item is "config" || item is "local") && isAdmin is false) continue;
-        //            List<string> colections = await GetColectionsAsync(item);
-        //            if (colections.Contains("Users") && isAdmin is false) colections.Remove("Users");
-        //            dBObjects.Add(new DBObject(item, colections));
-        //        }
-        //        return dBObjects;
-        //    }
-        //    else
-        //    {
-        //        return new List<DBObject> { };
-        //    }
-        //}
+        public async Task<Response> GetDatabasesAsync(bool isAdmin)
+        {
+            var cursor = await Client.ListDatabaseNamesAsync();
+            List<string> databases = await cursor.ToListAsync();
+            if (databases.Count > 0)
+            {
+                List<DBObject> dBObjects = new List<DBObject>();
+                foreach (var item in databases)
+                {
+                    if ((item is "admin" || item is "config" || item is "local") && isAdmin is false) continue;
+                    var response = await GetColectionsAsync(item);
+                    if (response.Message is not List<string> list) return response;
+                    if (list.Contains("Users") && isAdmin is false) list.Remove("Users");
+                    dBObjects.Add(new DBObject(item, list));
+                }
+                return new Response(true, dBObjects); ;
+            }
+            else
+            {
+                return new Response(false, "Базы данных не найдены");
+            }
+        }
         public async Task<Response> GetColectionsAsync(string databasename)
         {
             var database = Client.GetDatabase(databasename);

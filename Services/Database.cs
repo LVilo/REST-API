@@ -29,7 +29,6 @@ namespace MongoAPI.Services
         //public Task<bool> PutAsync(Config config);
         //public Task<bool> DeleteAsync(string Id);
         //public Task<Config> GetRecordByIdAsync(string Id);
-        //public Task<List<DBObject>> GetDatabasesAsync(bool isAdmin);
         //public Task<List<BsonDocument>> GetRecords(DocumentQueryRequest request);
         //public FilterDefinition<BsonDocument> BuildFilter(IEnumerable<FilterRequest> filters);
         //public Task<List<Field>> GetFields(DocumentQueryRequest request);
@@ -38,8 +37,9 @@ namespace MongoAPI.Services
 
 
 
-        public  Task<Response> GetColectionsAsync(string databasename);
-        public  Task<Response> GetRecords(DocumentQueryRequest request);
+        public Task<Response> GetDatabasesAsync(bool isAdmin);
+        public Task<Response> GetColectionsAsync(string databasename);
+        public Task<Response> GetRecords(DocumentQueryRequest request);
         public FilterDefinition<BsonDocument> BuildFilter(IEnumerable<FilterRequest> filters);
 
         public  Task<Response> CreateSchemaAsync(Schema schema);
